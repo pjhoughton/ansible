@@ -1,0 +1,9 @@
+[db_servers]
+[docker_servers]
+docker.houghton.network
+[file_servers]
+[web_servers]
+[workstations]
+ansible.houghton.network
+[xcp_servers]
+xo.houghton.network

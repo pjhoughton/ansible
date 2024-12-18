@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: true # needed for sudo 
+  tasks:
+  - name: Install aptitude and cockpit
+    tags: ubuntu,aptitude,cockpit
+    apt:
+      name: 
+        - aptitude
+        - cockpit
+      state: latest
+      update_cache: yes # best practice to update cache 
+    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+    
+- hosts: file_servers
+  become: true # needed for sudo 
+  tasks:
+  - name: Install nfs common 
+    tags: ubuntu,nfs-common, file_servers
+    apt:
+      name: nfs-common
+      state: latest 
+    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+    
+    
+    
+    
+    
+    
+  
+    
+  
+    
