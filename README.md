@@ -1,4 +1,12 @@
 
+# What is Ansible
+
+Ansible is an open source IT automation engine that automates provisioning, configuration management, application deployment, orchestration, and many other IT processes. It is free to use, and the project benefits from the experience and intelligence of its thousands of contributors.
+
+# How to Install Ansible
+
+
+
 # Full syntax to run ansible command
 
 ansible all --key-file ~/.ssh/ansible_ed25519 -i inventory -m ping
