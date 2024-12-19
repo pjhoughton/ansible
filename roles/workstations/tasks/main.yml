@@ -1,1 +1,26 @@
-.
+---
+- name: Ensure software-properties-common is installed
+  tags: 
+    - workstations
+    - ansible
+  apt:
+    name: software-properties-common
+    state: present
+    
+- name: Add Ansible APT repository for binary packages
+  apt_repository:
+    repo: deb https://ppa.launchpadcontent.net/ansible/ansible/ubuntu noble main
+    state: present
+
+- name: Add Ansible APT repository for source packages
+  apt_repository:
+    repo: deb-src https://ppa.launchpadcontent.net/ansible/ansible/ubuntu noble main
+    state: present
+- name: Install Ansible
+  tags: 
+    - workstations
+    - ansible
+  apt:
+    name: ansible
+    state: latest
+

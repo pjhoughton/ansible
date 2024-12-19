@@ -64,6 +64,19 @@ Create an SSH Key pair: run the followinhg command (note  i have added a comment
 
 Its best practice to have a github ( or similar) repository for  ease of version control, sharing  and documentation 
 
+# Github Syntax
+
+git pull 
+
+git status
+
+git add .
+
+git commit -m "added roles"
+
+git push
+
+
 # Ansible syntax
 
 ansible all --key-file ~/.ssh/ansible_ed25519 -i inventory -m ping
@@ -97,3 +110,20 @@ ansible-playbook --ask-become-pass install_aptitude.yml
 # tags can be used as well as limit 
 
 ansible-playbook --tags cockpit --ask-become-pass install_packages.yml
+
+
+
+# variables 
+
+can be used when when managing systems of different distributions as package and package management software , may well be differnet  
+
+declare variables inventary files or  host variable files 
+
+variable_name:value
+
+
+using variables inside Plays and tasks  
+
+eg.     name: {{variable_name}}
+
+

@@ -1,1 +1,9 @@
-.
+- name: Install docker
+  tags: ubuntu,docker
+  apt:
+    name: 
+      - docker-ce
+      - docker-compose
+    state: latest
+    update_cache: yes # best practice to update cache 
+  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 

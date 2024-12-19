@@ -3,6 +3,14 @@
   authorized_key:
     user: usr_ansible
     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
+    
+- name: Update and upgrade APT packages 
+  tags: always
+  apt: 
+    update_cache: yes 
+    upgrade: dist
+    autoremove: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
       
 - name: Install aptitude and cockpit
   tags: ubuntu,aptitude,cockpit
