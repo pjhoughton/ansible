@@ -1,0 +1,4 @@
+!*.yml
+!*.cfg
+!inventory
+!README.md
