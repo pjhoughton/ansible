@@ -15,10 +15,10 @@
   roles:
     - base
     
-#- hosts: db_servers
-#  become: true 
-# roles:
-#   - db_servers
+- hosts: db_servers
+  become: true 
+  roles:
+   - db_servers
     
 - hosts: docker_servers
   become: true
@@ -29,11 +29,11 @@
   become: true # needed for sudo 
   roles:
     - file_servers
-#    
-#- hosts: web_servers
-#  become: true # needed for sudo 
-#  roles:
-#    - web_servers
+   
+- hosts: web_servers
+  become: true # needed for sudo 
+  roles:
+    - web_servers
     
 - hosts: workstations
   become: true # needed for sudo 

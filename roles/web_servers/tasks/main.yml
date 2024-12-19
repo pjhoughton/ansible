@@ -1,1 +1,32 @@
-.
+---
+- name: Ensure Apache is installed
+  tags: 
+    - ubuntu
+    - web
+    - apache2
+  apt:
+    name: apache2
+    state: latest
+  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+
+- name: Ensure Apache is running
+  tags: 
+    - ubuntu
+    - web
+    - apache2
+  service:
+    name: apache2
+    state: started
+    enabled: true
+
+- name: Copy custom index.html to the web server
+  tags: 
+    - ubuntu
+    - web
+    - apache2
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'

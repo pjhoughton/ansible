@@ -1,1 +1,16 @@
-.
+---
+- name: Install PostgreSQL
+  tags: 
+    - ubuntu
+    - db
+    - postgresql
+  apt:
+    name: postgresql
+    state: Latest
+  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+  
+- name: Ensure PostgreSQL has started 
+  service:
+    name: postgresql
+    state: started
+    enabled: true
