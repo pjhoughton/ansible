@@ -7,7 +7,7 @@ Ansible is an open source IT automation engine that automates provisioning, conf
 
 
 
-# Full syntax to run ansible command
+# Ansible syntax
 
 ansible all --key-file ~/.ssh/ansible_ed25519 -i inventory -m ping
 
