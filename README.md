@@ -28,9 +28,41 @@ A limited distribution of reusable Ansible content (tasks, handlers, variables, 
 Tasks
 The definition of an ‘action’ to be applied to the managed host. You can execute a single task once with an ad hoc command using ansible or ansible-console (both create a virtual Play).
 
-# How to Install Ansible
+# How to Install Ansible (Ubuntu)
+
+On the control node:
 
 
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install -y ansible
+
+
+# SSH Keys
+
+SSH Keys are vital for ansible to work, you probably already use SSH keys but I suggest you have seperate key just for ansible, using the ed25519 standard due to the following benefits.
+
+1) it’s faster: to generate and to verify
+2) it’s more secure
+3) collision resilience – this means that it’s more resilient against hash-function collision attacks (types of attacks where large numbers of keys are generated with the hope of getting two different keys have matching hashes)
+4) keys are smaller – this, for instance, means that it’s easier to transfer and to copy/paste them
+
+On the control node:
+
+Create an SSH Key pair: run the followinhg command (note  i have added a comment, and changed the file name to denote its to be used for ansiable and also so it doenst over write your existing keys, usually a passphrase is a good idea but for automation leave it blank. 
+
+   ssh-keygen -t ed25519  -C "Ansible" -f ~/.ssh/ansible _ed25519
+
+ Copy the public key to all managed nodes
+ 
+   ssh-copy-id -i ~/.ssh/ansible _ed25519 user@host
+
+
+# GitHub
+
+Its best practice to have a github ( or similar) repository for  ease of version control, sharing  and documentation 
 
 # Ansible syntax
 
