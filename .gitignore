@@ -1,4 +1,9 @@
-!*.yml
-!*.cfg
 !inventory
+!ansible.cfg
 !README.md
+!*.cfg
+!*.md
+!*.yml
+!*.yaml
+
+env
