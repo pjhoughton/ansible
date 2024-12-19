@@ -16,7 +16,7 @@
       name: usr_ansible
       groups: root
       
-  - name: add ssh key for simone
+  - name: add ssh key for usr_ansible
     tags: always
     authorized_key:
       user: usr_ansible

@@ -1,0 +1,48 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+   - name: Update repository Index
+     tags: always
+     apt:
+       update_cache: yes
+     changed_when: false 
+     when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+
+
+- hosts: all
+  become: true
+  roles:
+    - base
+    
+#- hosts: db_servers
+#  become: true 
+# roles:
+#   - db_servers
+    
+#- hosts: docker_servers
+#  become: true
+#  roles:
+#    - docker_servers
+#    
+- hosts: file_servers
+  become: true # needed for sudo 
+  roles:
+    - file_servers
+#    
+#- hosts: web_servers
+#  become: true # needed for sudo 
+#  roles:
+#    - web_servers
+    
+#- hosts: workstations
+#  become: true # needed for sudo 
+#  roles:
+#    - workstations
+#    
+#- hosts: xcp_servers
+#  become: true # needed for sudo 
+#  roles:
+#    - xcp_servers
+    
+   

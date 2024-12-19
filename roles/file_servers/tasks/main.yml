@@ -1,0 +1,11 @@
+- name: Install nfs common 
+  tags: ubuntu,nfs-common, file_servers
+  apt:
+    name: nfs-common
+    state: latest 
+  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+    
+    
+    
+    
+    
