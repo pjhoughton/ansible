@@ -3,7 +3,9 @@
   become: true # needed for sudo 
   tasks:
   - name: Install Updates 
-    tags: ubuntu,always
+    tags: 
+      - ubuntu
+      - always
     apt:
       upgrade: dist
       update_cache: yes # best practice to update cache 

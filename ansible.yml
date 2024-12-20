@@ -3,19 +3,22 @@
   become: true # needed for sudo 
   tasks:
   - name: Create Ansible User
-    tags: always
+    tags: 
+      - always
     user:
       user: usr_ansible
       groups: root
       
   - name: add ssh key for simone
-    tags: always
+    tags: 
+      - always
     authorized_key:
       user: usr_ansible
       key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
       
   - name: add suduoers file for usr_ansible
-    tags: always
+    tags: 
+      - always
     copy:
       src: sudoer_usr_ansible
       dest: /etc/sudoers.d/usr_ansible

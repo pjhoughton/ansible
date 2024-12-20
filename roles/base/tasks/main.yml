@@ -1,3 +1,6 @@
+---
+# main.yaml for base/ all servers  
+
 - name: add ssh key usr_ansible
   tags: always
   authorized_key:

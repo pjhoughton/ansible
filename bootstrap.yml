@@ -1,29 +1,42 @@
 ---
+
+#  Bootstrap configurationtion  for new build Ununtu Servers that need to be administrated by  Ansible
+
 - hosts: all
   become: true # needed for sudo 
   tasks:
-  
   - name: Install Updates 
-    tags: ubuntu,always
+    tags: 
+      - ubuntu
+      - always
     apt:
       upgrade: dist
       update_cache: yes # best practice to update cache 
     when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
     
+    # Create Ansible User that will execute all Plays 
+    
   - name: Create Ansible User
-    tags: always
+    tags: 
+      - always
     user:
       name: usr_ansible
       groups: root
       
+# Add ansible SHH Key to user 
+      
   - name: add ssh key for usr_ansible
-    tags: always
+    tags: 
+      - always
     authorized_key:
       user: usr_ansible
       key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
       
+# Make ansible user not need to sudo 
+      
   - name: add suduoers file for usr_ansible
-    tags: always
+    tags: 
+      - always
     copy:
       src: sudoer_usr_ansible
       dest: /etc/sudoers.d/usr_ansible

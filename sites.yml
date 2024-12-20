@@ -3,7 +3,8 @@
   become: true
   pre_tasks:
    - name: Update repository Index
-     tags: always
+     tags: 
+       - always
      apt:
        update_cache: yes
      changed_when: false 
@@ -40,9 +41,9 @@
   roles:
     - workstations
     
-#- hosts: xcp_servers
-#  become: true # needed for sudo 
-#  roles:
-#    - xcp_servers
-    
+- hosts: xcp_servers
+  become: true # needed for sudo 
+  roles:
+    - xcp_servers
+   
    

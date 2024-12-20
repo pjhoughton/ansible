@@ -2,6 +2,7 @@
 [docker_servers]
 docker.houghton.network
 [file_servers]
+docker.houghton.network
 [web_servers]
 [workstations]
 ansible.houghton.network
