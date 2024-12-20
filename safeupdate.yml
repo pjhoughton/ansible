@@ -1,0 +1,32 @@
+---
+- hosts: all
+  become: true # needed for sudo 
+  tasks:
+  - name: Ensure aptitude is installed
+    apt:
+      name: aptitude
+      state: present
+      update_cache: yes
+    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+    
+
+  - name: Check if updates are available
+    command: apt-get -s upgrade | grep -i "upgraded, 0 newly installed, 0 to remove"
+    register: updates_available
+    failed_when: updates_available.rc == 0    
+
+    
+  - name: Perform safe upgrade using aptitude
+    command: aptitude safe-upgrade -y
+    when: updates_available.rc != 0
+   
+  - name: Update package cache
+    apt:
+      update_cache: yes
+      autoremove: yes
+      autoclean: yes
+      
+    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+    
+    
+    

@@ -13,6 +13,7 @@
     update_cache: yes 
     upgrade: dist
     autoremove: yes
+    autoclean: yes 
   when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
       
 - name: Install aptitude and cockpit

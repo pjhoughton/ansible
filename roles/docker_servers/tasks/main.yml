@@ -2,7 +2,9 @@
 # main.yaml for docker_server
 
 - name: Install docker
-  tags: ubuntu,docker
+  tags: 
+    - ubuntu
+    - docker
   apt:
     name: 
       - docker-ce
@@ -10,3 +12,30 @@
     state: latest
     update_cache: yes # best practice to update cache 
   when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+  
+- name: Ensure user is part of Docker group 
+  tags:
+    - ubuntu
+    - docker
+  user: 
+    name: usr_ansible 
+    groups: docker 
+    append: yes 
+   
+- name: Pull the latest changes with docker-compose
+  tags:
+    - ubuntu
+    - docker
+  command: docker compose pull
+  register: compose_pull_output
+  args:
+    chdir: /home/paul/docker-compose
+
+- name: Restart containers if images were updated
+  tags:
+    - ubuntu
+    - docker
+  command: docker compose up -d
+  when: "'Status: Downloaded newer image' in compose_pull_output.stdout"
+  args:
+    chdir: /home/paul/docker-compose
