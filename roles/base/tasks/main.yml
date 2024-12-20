@@ -2,13 +2,15 @@
 # main.yaml for base/ all servers  
 
 - name: add ssh key usr_ansible
-  tags: always
+  tags: 
+    - always
   authorized_key:
     user: usr_ansible
     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
     
 - name: Update and upgrade APT packages 
-  tags: always
+  tags: 
+    - always
   apt: 
     update_cache: yes 
     upgrade: dist
@@ -17,7 +19,10 @@
   when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
       
 - name: Install aptitude and cockpit
-  tags: ubuntu,aptitude,cockpit
+  tags: 
+    - ubuntu
+    - aptitude
+    - cockpit
   apt:
     name: 
       - aptitude
@@ -25,3 +30,17 @@
     state: latest
     update_cache: yes # best practice to update cache 
   when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+
+
+- name: Check available disk space
+  shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
+  register: disk_space
+
+- name: Ensure disk space is not critically low
+  debug:
+    msg: |
+          *************************************
+          * WARNING: Disk space is critically low! *
+          * Available space is only {{ 100 - disk_space.stdout|int }}% *
+          *************************************
+  when: disk_space.stdout|int > 80

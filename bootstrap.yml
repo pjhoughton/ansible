@@ -1,6 +1,6 @@
 ---
 
-#  Bootstrap configurationtion  for new build Ununtu Servers that need to be administrated by  Ansible
+# Bootstrap configurationtion  for new build Ununtu Servers that need to be administrated by  Ansible
 
 - hosts: all
   become: true # needed for sudo 
@@ -14,7 +14,7 @@
       update_cache: yes # best practice to update cache 
     when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
     
-    # Create Ansible User that will execute all Plays 
+# Create Ansible User that will execute all Plays 
     
   - name: Create Ansible User
     tags: 

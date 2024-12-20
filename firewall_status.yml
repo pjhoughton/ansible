@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true # needed for sudo 
+  tasks:
+    - name: Check firewall status
+      shell: sudo ufw status
+      register: ufw_status
+
+    - name: Display firewall status and rules
+      debug:
+        msg: "{{ ufw_status.stdout_lines }}"

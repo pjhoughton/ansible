@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: true # needed for sudo 
+  tasks:
+    - name: Check available disk space
+      shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
+      register: disk_space
+
+    - name: Ensure disk space is not critically low
+      debug:
+        msg: |
+          *************************************
+          * WARNING: Disk space is critically low! *
+          * Available space is only {{ 100 - disk_space.stdout|int }}% *
+          *************************************
+      when: disk_space.stdout|int > 80
