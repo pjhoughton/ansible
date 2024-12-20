@@ -1,30 +1,46 @@
 ---
-- name: Stats
-  hosts: all
-  gather_facts: True
+- hosts: all
+  become: true
   tasks:
-    - name: Debug Gathered Facts
+    - name: Gather and debug system facts
       debug:
-        var: item
-      with_items:
-        - "{{ ansible_lsb }}"
-        - "{{ ansible_default_ipv4 }}"
-        - "{{ ansible_date_time }}"
-        - "{{ ansible_dns }}"
-        - "{{ ansible_env }}"
-        - "{{ ansible_hostname }}"
-        - "{{ ansible_memory_mb }}"
-        - "{{ ansible_memfree_mb }}"
-
+        msg: |
+          System Information:
+          -------------------
+          Distribution: {{ ansible_lsb.description }}
+          Codename: {{ ansible_lsb.codename }}
+          Release: {{ ansible_lsb.release }}
+          
+          Hostname: {{ ansible_hostname }}
+          
+          Default IPv4:
+            Address: {{ ansible_default_ipv4.address }}
+            Gateway: {{ ansible_default_ipv4.gateway }}
+            Interface: {{ ansible_default_ipv4.interface }}
+          
+          Memory:
+            Total: {{ ansible_memory_mb.real.total }} MB
+            Free: {{ ansible_memfree_mb }} MB
+          
+          Date and Time:
+            Current Time: {{ ansible_date_time.date }} {{ ansible_date_time.time }}
+            Timezone: {{ ansible_date_time.tz }}
+          
+          DNS:
+            Nameservers: {{ ansible_dns.nameservers | join(', ') }}
+          
+          Environment:
+            Home: {{ ansible_env.HOME }}
+            Shell: {{ ansible_env.SHELL }}
+            User: {{ ansible_env.USER }}
+    
     - name: Capture OS Name
       command: uname -a
       register: os_name
 
     - name: Debug OS Name
       debug:
-        var: os_name.stdout
-    
-  
-    
-  
-    
+        msg: |
+          Operating System Details:
+          -------------------------
+          {{ os_name.stdout }}

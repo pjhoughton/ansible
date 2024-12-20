@@ -1,0 +1,27 @@
+---
+# Initial Configuration configuration for new build Ununtu Servers
+
+- hosts: all
+  become: true # needed for sudo 
+  tasks:
+  - name: Check if IPv6 is enabled
+    command: sysctl net.ipv6.conf.all.disable_ipv6
+    register: ipv6_status
+
+  - name: Disable IPv6
+    sysctl:
+      name: net.ipv6.conf.all.disable_ipv6
+      value: 1
+      state: present
+    when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
+
+  - name: Persist IPv6 disable
+    lineinfile:
+      path: /etc/sysctl.conf
+      line: 'net.ipv6.conf.all.disable_ipv6 = 1'
+      state: present
+    when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
+
+  - name: Reload sysctl
+    command: sysctl -p
+    when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
