@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: ansible
+  hosts: all
   become: true # needed for sudo 
   tasks:
   - name: Create Ansible User
@@ -7,7 +8,7 @@
       - always
     user:
       user: usr_ansible
-      groups: root
+      groups: sudo
       
   - name: add ssh key for simone
     tags: 

@@ -5,5 +5,7 @@
 !*.md
 !*.yml
 !*.yaml
+!demo_ansible_vault.pass
 
 env
+ansible_vault.pass

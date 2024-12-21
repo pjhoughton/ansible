@@ -2,7 +2,8 @@
 
 # Bootstrap configurationtion  for new build Ununtu Servers that need to be administrated by  Ansible
 
-- hosts: all
+- name: bootstrap
+  hosts: all
   become: true # needed for sudo 
   tasks:
   - name: Install Updates 
@@ -21,7 +22,7 @@
       - always
     user:
       name: usr_ansible
-      groups: root
+      groups: sudo
       
 # Add ansible SHH Key to user 
       

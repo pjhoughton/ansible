@@ -1,7 +1,8 @@
 ---
 # Initial Configuration configuration for new build Ununtu Servers
 
-- hosts: all
+- name: install packages
+  hosts: all
   become: true # needed for sudo 
   tasks:
   

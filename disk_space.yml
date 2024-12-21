@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: check disk space
+  hosts: all
   become: true # needed for sudo 
   tasks:
     - name: Check available disk space

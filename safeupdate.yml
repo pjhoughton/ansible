@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: safe upgrade 
+  hosts: all
   become: true # needed for sudo 
   tasks:
   - name: Ensure aptitude is installed
