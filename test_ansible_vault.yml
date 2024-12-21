@@ -1,0 +1,9 @@
+---
+- name: Show the secret stored in Ansible Vault
+  hosts: localhost
+  vars_files:
+    - hosts/group_vars/demo_vault.yml
+  tasks:
+    - name: Show the secret
+      debug:
+        msg: "The secret password is {{ my_secret }}"
