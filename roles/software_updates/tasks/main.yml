@@ -1,0 +1,3 @@
+---
+# tasks file for software_updates
+- include_tasks: safe_upgrade.yml

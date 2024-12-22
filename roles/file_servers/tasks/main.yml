@@ -1,6 +1,5 @@
 ---
-# main.yaml for file_servers
-
+# tasks file for file_servers
 - name: Install nfs common 
   tags: ubuntu,nfs-common, file_servers
   apt:

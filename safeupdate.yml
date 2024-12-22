@@ -1,33 +1,33 @@
 ---
-- name: safe upgrade 
+- name: safe upgrade
   hosts: all
-  become: true # needed for sudo 
+  become: true # needed for sudo
   tasks:
-  - name: Ensure aptitude is installed
-    apt:
-      name: aptitude
-      state: present
-      update_cache: yes
-    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-    
+    - name: Ensure aptitude is installed
+      apt:
+        name: aptitude
+        state: present
+        update_cache: yes
+        autoremove: yes
+        autoclean: yes
+        cache_valid_time: 3600
+      when: ansible_distribution in ["Debian", "Ubuntu"] # filtering to specific distributions or versions as other distributions don't use apt
 
-  - name: Check if updates are available
-    command: apt-get -s upgrade | grep -i "upgraded, 0 newly installed, 0 to remove"
-    register: updates_available
-    failed_when: updates_available.rc == 0    
+    - name: Check if any upgrades are available using apt-get
+      command: apt-get -s dist-upgrade
+      register: upgrade_check
+      changed_when: false
+      check_mode: no
 
-    
-  - name: Perform safe upgrade using aptitude
-    command: aptitude safe-upgrade -y
-    when: updates_available.rc != 0
-   
-  - name: Update package cache
-    apt:
-      update_cache: yes
-      autoremove: yes
-      autoclean: yes
-      
-    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-    
-    
-    
+    - name: Set upgrade_required fact
+      set_fact:
+        upgrade_required: "{{ 'The following packages will be upgraded:' in upgrade_check.stdout }}"
+
+    - name: Print upgradeable packages only if there are updates
+      debug:
+        msg: "{{ upgrade_check.stdout_lines }}"
+      when: upgrade_required
+
+    - name: Upgrade all packages using aptitude
+      command: aptitude safe-upgrade -y
+      when: upgrade_required

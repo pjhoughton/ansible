@@ -1,5 +1,5 @@
 ---
-# main.yaml for docker_server
+# tasks file for docker_servers
 
 - name: Install docker
   tags: 
@@ -39,3 +39,4 @@
   when: "'Status: Downloaded newer image' in compose_pull_output.stdout"
   args:
     chdir: /home/paul/docker-compose
+

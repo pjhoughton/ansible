@@ -15,6 +15,7 @@
   become: true
   roles:
     - base
+    - software_updates
     
 - hosts: db_servers
   become: true 

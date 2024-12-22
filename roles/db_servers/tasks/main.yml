@@ -1,5 +1,5 @@
 ---
-# main.yaml for db_servers 
+# tasks file for db_servers
 
 - name: Install PostgreSQL
   tags: 
