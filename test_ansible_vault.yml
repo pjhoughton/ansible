@@ -1,8 +1,8 @@
 ---
-- name: Show the secret stored in Ansible Vault
+- name: Test using ansible vault
   hosts: localhost
   vars_files:
-    - hosts/group_vars/demo_vault.yml
+    - demo_vault.yml
   tasks:
     - name: Show the secret
       debug:

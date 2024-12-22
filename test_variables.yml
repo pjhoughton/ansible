@@ -1,0 +1,9 @@
+---
+- name: Test using variables
+  hosts: localhost
+  vars_files:
+    - all.yml
+  tasks:
+    - name: Show the secret
+      debug:
+        msg: "The variable found in group_vars_all.yaml is: {{ test }}"
