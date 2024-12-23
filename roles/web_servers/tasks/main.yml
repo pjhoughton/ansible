@@ -1,2 +1,20 @@
 ---
-# tasks file for web_servers
+# roles/webserver/tasks/main.yml
+
+- name: Install web server
+  include_tasks: install.yml
+
+- name: Copy index.html
+  include_tasks: copy_index.yml
+
+- name: Copy website
+  include_tasks: copy_website.yml
+
+- name: Update website
+  include_tasks: update_website.yml
+
+- name: Uninstall web server
+  include_tasks: uninstall.yml
+
+- name: Tidy up
+  include_tasks: tidy_up.yml

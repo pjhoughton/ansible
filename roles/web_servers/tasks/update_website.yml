@@ -1,0 +1,9 @@
+---
+# roles/webserver/tasks/update_website.yml
+
+- name: Update website files
+  synchronize:
+    src: files/website/
+    dest: /var/www/html/
+  notify:
+    - Reload web server

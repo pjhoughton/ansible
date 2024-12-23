@@ -1,0 +1,10 @@
+
+---
+# roles/webserver/tasks/copy_website.yml
+
+- name: Copy website files
+  copy:
+    src: files/website/
+    dest: /var/www/html/
+  notify:
+    - Reload web server

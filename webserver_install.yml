@@ -1,0 +1,15 @@
+---
+# playbook.yml
+
+- hosts: web_servers
+  vars:
+    webserver_package: nginx  # Change to apache2 if you prefer Apache
+    webserver_service: nginx  # Change to apache2 if you prefer Apache
+  roles:
+    - role: webserver
+  tasks:
+    - name: Install web server
+      include_tasks: roles/webserver/tasks/install.yml
+
+    - name: Copy index.html
+      include_tasks: roles/webserver/tasks/copy_index.yml

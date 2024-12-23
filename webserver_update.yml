@@ -1,0 +1,12 @@
+---
+# playbook.yml
+
+- hosts: webservers
+  vars:
+    webserver_package: nginx  # Change to apache2 if you prefer Apache
+    webserver_service: nginx  # Change to apache2 if you prefer Apache
+  roles:
+    - role: webserver
+  tasks:
+    - name: Update website files
+      include_tasks: roles/webserver/tasks/update_website.yml
