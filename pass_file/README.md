@@ -1,5 +1,4 @@
-
-# Note if you dont like vim  change the default editor by adding the following line EDITOR=nano  to file  ~/.bashrc
+Ansible Vault is a feature of ansible that allows you to keep sensitive data such as passwords or keys in encrypted files, rather than as plaintext in playbooks or roles. These vault files can then be distributed or placed in source control by default vaults are edited in vim this can be changed to nano by adding the following line EDITOR=nano  to file  ~/.bashrc
 
 
 # create a directory pass_file

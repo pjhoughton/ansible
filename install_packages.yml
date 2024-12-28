@@ -6,6 +6,11 @@
   become: true # needed for sudo 
   tasks:
   
+  
+  - name: check disk space
+    debug:
+    var: my_secret
+  
 # Install Core Apps 
   
   - name: Install aptitude and cockpit
