@@ -1,2 +1,7 @@
 ---
 # defaults file for key_management
+---
+rsa_key_size: 4096
+ed25519_key_size: 256
+ssh_key_backup_path: /backup/ssh_keys
+

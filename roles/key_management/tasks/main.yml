@@ -1,2 +1,7 @@
 ---
 # tasks file for key_management
+---
+- include_tasks: create_keys.yml
+- include_tasks: backup_keys.yml
+- include_tasks: delete_backups.yml
+
