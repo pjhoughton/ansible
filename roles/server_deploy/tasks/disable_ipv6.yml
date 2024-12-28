@@ -1,0 +1,24 @@
+---
+- name: Ensure IPv6 is disabled
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check if IPv6 is enabled
+      command: sysctl net.ipv6.conf.all.disable_ipv6
+      register: ipv6_status
+
+    - name: Disable IPv6
+      sysctl:
+        name: net.ipv6.conf.all.disable_ipv6
+        value: 1
+        state: present
+      when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
+      notify: Reload sysctl
+
+    - name: Persist IPv6 disable
+      lineinfile:
+        path: /etc/sysctl.conf
+        line: 'net.ipv6.conf.all.disable_ipv6 = 1'
+        state: present
+      when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
+      notify: Reload sysctl

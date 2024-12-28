@@ -1,0 +1,11 @@
+---
+# roles/webserver/tasks/install.yml
+
+- name: Install Nginx or Apache2
+  apt:
+    name: "{{ item }}"  # Could have just used webserver_package here using item alows multiple packages to be installed 
+    state: present
+  with_items:
+    - "{{ webserver_package }}"
+  notify:
+    - Restart web server

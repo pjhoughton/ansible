@@ -1,0 +1,22 @@
+---
+# roles/webserver/handlers/main.yml
+
+- name: Start web server
+  service:
+    name: "{{ webserver_service }}"
+    state: started
+
+- name: Stop web server
+  service:
+    name: "{{ webserver_service }}"
+    state: stopped
+
+- name: Restart web server
+  service:
+    name: "{{ webserver_service }}"
+    state: restarted
+
+- name: Reload web server
+  service:
+    name: "{{ webserver_service }}"
+    state: reloaded

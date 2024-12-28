@@ -1,34 +1,20 @@
 ---
-# main.yaml for web_servers 
+# roles/webserver/tasks/main.yml
 
-- name: Ensure Apache is installed
-  tags: 
-    - ubuntu
-    - web
-    - apache2
-  apt:
-    name: apache2
-    state: latest
-  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+- name: Install web server
+  include_tasks: install.yml
 
-- name: Ensure Apache is running
-  tags: 
-    - ubuntu
-    - web
-    - apache2
-  service:
-    name: apache2
-    state: started
-    enabled: true
+- name: Copy index.html
+  include_tasks: copy_index.yml
 
-- name: Copy custom index.html to the web server
-  tags: 
-    - ubuntu
-    - web
-    - apache2
-  copy:
-    src: index.html
-    dest: /var/www/html/index.html
-    owner: www-data
-    group: www-data
-    mode: '0644'
+- name: Copy website
+  include_tasks: copy_website.yml
+
+- name: Update website
+  include_tasks: update_website.yml
+
+- name: Uninstall web server
+  include_tasks: uninstall.yml
+
+- name: Tidy up
+  include_tasks: tidy_up.yml

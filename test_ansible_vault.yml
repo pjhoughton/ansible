@@ -1,0 +1,9 @@
+---
+- name: Test using ansible vault
+  hosts: localhost
+  vars_files:
+    - demo_vault.yml
+  tasks:
+    - name: Show the secret
+      debug:
+        msg: "The secret password is {{ my_secret }}"

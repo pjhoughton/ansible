@@ -1,5 +1,5 @@
 ---
-# main.yaml for base/ all servers  
+# tasks file for base
 
 - name: add ssh key usr_ansible
   tags: 
@@ -44,3 +44,4 @@
           * Available space is only {{ 100 - disk_space.stdout|int }}% *
           *************************************
   when: disk_space.stdout|int > 80
+

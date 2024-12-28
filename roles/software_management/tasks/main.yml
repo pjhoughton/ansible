@@ -1,0 +1,8 @@
+---
+# tasks file for software_updates
+
+- include_tasks: apt_cache.yml
+- include_tasks: safe_upgrade.yml
+- include_tasks: software_install.yml
+- include_tasks: aptitude_software_install.yml
+- include_tasks: software_uninstall.yml

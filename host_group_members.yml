@@ -1,0 +1,94 @@
+---
+- name: Categorize and show hosts by OS and type, then by production/test and type
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Show hosts by OS and type
+      debug:
+        msg: |
+          Windows Servers:
+          Web Servers:
+          {% for host in groups['prod_windows_web'] + groups['test_windows_web'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Database Servers:
+          {% for host in groups['prod_windows_db'] + groups['test_windows_db'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Application Servers:
+          {% for host in groups['prod_windows_app'] + groups['test_windows_app'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          File Servers:
+          {% for host in groups['prod_windows_file'] + groups['test_windows_file'] %}
+          - {{ host }}
+          {% endfor %}
+
+          Linux Servers:
+          Web Servers:
+          {% for host in groups['prod_linux_web'] + groups['test_linux_web'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Database Servers:
+          {% for host in groups['prod_linux_db'] + groups['test_linux_db'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Application Servers:
+          {% for host in groups['prod_linux_app'] + groups['test_linux_app'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          File Servers:
+          {% for host in groups['prod_linux_file'] + groups['test_linux_file'] %}
+          - {{ host }}
+          {% endfor %}
+
+    - name: Show hosts by production/test and type
+      debug:
+        msg: |
+          Production:
+          Web Servers:
+          {% for host in groups['prod_windows_web'] + groups['prod_linux_web'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Database Servers:
+          {% for host in groups['prod_windows_db'] + groups['prod_linux_db'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Application Servers:
+          {% for host in groups['prod_windows_app'] + groups['prod_linux_app'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          File Servers:
+          {% for host in groups['prod_windows_file'] + groups['prod_linux_file'] %}
+          - {{ host }}
+          {% endfor %}
+
+          Test:
+          Web Servers:
+          {% for host in groups['test_windows_web'] + groups['test_linux_web'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Database Servers:
+          {% for host in groups['test_windows_db'] + groups['test_linux_db'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          Application Servers:
+          {% for host in groups['test_windows_app'] + groups['test_linux_app'] %}
+          - {{ host }}
+          {% endfor %}
+          
+          File Servers:
+          {% for host in groups['test_windows_file'] + groups['test_linux_file'] %}
+          - {{ host }}
+          {% endfor %}

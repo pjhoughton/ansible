@@ -1,5 +1,5 @@
 ---
-# main.yaml for workstations
+# tasks file for workstations
 
 - name: Ensure software-properties-common is installed
   tags: 

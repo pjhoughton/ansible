@@ -1,0 +1,7 @@
+---
+- name: Install software packages
+  become: yes
+  aptitude:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ software_list }}"

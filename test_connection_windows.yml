@@ -1,0 +1,9 @@
+---
+- name: Test WinRM connection
+  hosts: windows_servers
+  gather_facts: yes
+  tasks:
+    - name: Test connection
+      win_ping:
+      vars:
+        ansible_winrm_server_cert_validation: ignore
