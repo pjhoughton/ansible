@@ -1,0 +1,12 @@
+---
+- name: Delete RSA key backup
+  file:
+    path: "{{ ssh_key_backup_path }}/id_rsa.bak"
+    state: absent
+  become: yes
+
+- name: Delete ED25519 key backup
+  file:
+    path: "{{ ssh_key_backup_path }}/id_ed25519.bak"
+    state: absent
+  become: yes

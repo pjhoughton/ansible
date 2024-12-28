@@ -1,0 +1,21 @@
+---
+- name: Ensure backup directory exists
+  file:
+    path: "{{ ssh_key_backup_path }}"
+    state: directory
+    mode: '0700'
+  become: yes
+
+- name: Backup existing RSA key
+  copy:
+    src: "{{ ansible_user_dir }}/.ssh/id_rsa"
+    dest: "{{ ssh_key_backup_path }}/id_rsa.bak"
+    remote_src: yes
+  when: lookup('file', '{{ ansible_user_dir }}/.ssh/id_rsa')
+
+- name: Backup existing ED25519 key
+  copy:
+    src: "{{ ansible_user_dir }}/.ssh/id_ed25519"
+    dest: "{{ ssh_key_backup_path }}/id_ed25519.bak"
+    remote_src: yes
+  when: lookup('file', '{{ ansible_user_dir }}/.ssh/id_ed25519')
