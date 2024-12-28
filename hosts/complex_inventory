@@ -1,0 +1,130 @@
+# Nested Inventory, give more options to sort by production/test or linux/windows : 
+#
+# A simplified inventory looks like this 
+# [db_servers]
+# [docker_servers]
+# docker.houghton.network
+# [file_servers]
+# docker.houghton.network
+# [web_servers]
+# [workstations]
+# ansible.houghton.network
+# [xcp_servers]
+# xo.houghton.network
+# [windows_servers]
+# pjhlaptop.houghton.network
+
+
+# Nested Inventory
+
+[production:children]
+production_windows
+production_linux
+
+[test:children]
+test_windows
+test_linux
+
+[windows:children]
+production_windows
+test_windows
+
+[linux:children]
+production_linux
+test_linux
+
+[production_windows:children]
+prod_windows_web
+prod_windows_db
+prod_windows_file
+prod_windows_app
+
+[production_linux:children]
+prod_linux_web
+prod_linux_db
+prod_linux_file
+prod_linux_app
+
+[test_windows:children]
+test_windows_web
+test_windows_db
+test_windows_file
+test_windows_app
+
+[test_linux:children]
+test_linux_web
+test_linux_db
+test_linux_file
+test_linux_app
+
+[prod_windows_web]
+# List of production Windows web servers
+
+[prod_windows_db]
+# List of production Windows database servers
+
+[prod_windows_file]
+# List of production Windows file servers
+
+[prod_windows_app]
+# List of production Windows application servers
+
+[prod_linux_web]
+# List of production Linux web servers
+
+[prod_linux_db]
+# List of production Linux database servers
+
+[prod_linux_file]
+# List of production Linux file servers
+
+[prod_linux_app]
+# List of production Linux application servers
+
+[test_windows_web]
+# List of test Windows web servers
+
+[test_windows_db]
+# List of test Windows database servers
+
+[test_windows_file]
+# List of test Windows file servers
+
+[test_windows_app]
+# List of test Windows application servers
+
+[test_linux_web]
+# List of test Linux web servers
+
+[test_linux_db]
+# List of test Linux database servers
+
+[test_linux_file]
+# List of test Linux file servers
+
+[test_linux_app]
+# List of test Linux application servers
+
+[web_servers:children]
+prod_windows_web
+prod_linux_web
+test_windows_web
+test_linux_web
+
+[db_servers:children]
+prod_windows_db
+prod_linux_db
+test_windows_db
+test_linux_db
+
+[application_servers:children]
+prod_windows_app
+prod_linux_app
+test_windows_app
+test_linux_app
+
+[file_servers:children]
+prod_windows_file
+prod_linux_file
+test_windows_file
+test_linux_file

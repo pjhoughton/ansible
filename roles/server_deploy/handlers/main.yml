@@ -1,0 +1,5 @@
+---
+# handlers file for server_deploy
+  handlers:
+    - name: Reload sysctl
+      command: sysctl -p

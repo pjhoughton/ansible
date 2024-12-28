@@ -1,0 +1,5 @@
+---
+# tasks file for server_deploy
+- include_tasks: swap_file.yml
+- include_tasks: disable_ipv6.yml
+- include_tasks: set_timezone.yml

@@ -1,0 +1,9 @@
+---
+# defaults file for software_updates
+
+software_list:
+  - git
+  - aptitude
+  - copilot
+
+software_uninstall_list:

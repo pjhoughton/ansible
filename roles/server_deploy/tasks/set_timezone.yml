@@ -1,0 +1,8 @@
+---
+- name: Check the current timezone
+  command: timedatectl show -p Timezone --value
+  register: current_timezone
+
+- name: Set timezone
+  command: timedatectl set-timezone {{ timezone }}
+  when: current_timezone.stdout != timezone

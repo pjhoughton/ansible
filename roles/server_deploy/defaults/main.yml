@@ -1,0 +1,6 @@
+---
+# defaults file for server_deploy
+swap_size: 4G
+timezone: Europe/London
+
+

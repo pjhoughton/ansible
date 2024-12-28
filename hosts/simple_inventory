@@ -8,3 +8,5 @@ docker.houghton.network
 ansible.houghton.network
 [xcp_servers]
 xo.houghton.network
+[windows_servers]
+pjhlaptop.houghton.network
