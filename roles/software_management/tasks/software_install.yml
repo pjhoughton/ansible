@@ -1,18 +1,13 @@
-<<<<<<< HEAD
 ---
-- name: Install software packages
-  become: yes
-  apt:
-    name: "{{ item }}"
-    state: latest
-  loop: "{{ software_list }}"
-=======
----
-# roles/safe_upgrade/tasks/software_install.yml
+# tasks file for software_install
+
 - name: Install software packages
   become: yes
   ansible.builtin.apt:
     name: "{{ item }}"
     state: latest
   loop: "{{ software_list }}"
->>>>>>> 3370257 (updates)
+  tags:
+    - software
+    - install
+    - apt

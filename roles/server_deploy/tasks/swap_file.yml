@@ -1,32 +1,53 @@
 ---
+# tasks file for managing swap file
+
 - name: Check if swap file exists
-  tags:
-    - ubuntu
-  stat:
+  ansible.builtin.stat:
     path: /swapfile
   register: swapfile_exists
+  tags:
+    - swap
+    - check
 
 - name: Create swap file
-  command: fallocate -l {{ swap_size }} /swapfile
+  ansible.builtin.command:
+    cmd: fallocate -l {{ swap_size }} /swapfile
   when: not swapfile_exists.stat.exists
+  tags:
+    - swap
+    - create
 
 - name: Set swap file permissions
-  file:
+  ansible.builtin.file:
     path: /swapfile
     mode: '0600'
   when: not swapfile_exists.stat.exists
+  tags:
+    - swap
+    - permissions
 
 - name: Make swap file
-  command: mkswap /swapfile
+  ansible.builtin.command:
+    cmd: mkswap /swapfile
   when: not swapfile_exists.stat.exists
+  tags:
+    - swap
+    - make
 
 - name: Enable swap file
-  command: swapon /swapfile
+  ansible.builtin.command:
+    cmd: swapon /swapfile
   when: not swapfile_exists.stat.exists
+  tags:
+    - swap
+    - enable
 
 - name: Add swap to fstab
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/fstab
     line: '/swapfile none swap sw 0 0'
     create: yes
   when: not swapfile_exists.stat.exists
+  tags:
+    - swap
+    - fstab

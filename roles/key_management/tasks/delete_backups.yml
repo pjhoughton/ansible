@@ -1,12 +1,22 @@
 ---
+# tasks file for ssh_key_backup_deletion
+
 - name: Delete RSA key backup
-  file:
+  ansible.builtin.file:
     path: "{{ ssh_key_backup_path }}/id_rsa.bak"
     state: absent
   become: yes
+  tags:
+    - ssh
+    - cleanup
+    - rsa
 
 - name: Delete ED25519 key backup
-  file:
+  ansible.builtin.file:
     path: "{{ ssh_key_backup_path }}/id_ed25519.bak"
     state: absent
   become: yes
+  tags:
+    - ssh
+    - cleanup
+    - ed25519

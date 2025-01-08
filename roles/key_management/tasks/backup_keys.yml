@@ -1,21 +1,32 @@
 ---
+# tasks file for backup_ssh_keys
+
 - name: Ensure backup directory exists
-  file:
+  ansible.builtin.file:
     path: "{{ ssh_key_backup_path }}"
     state: directory
     mode: '0700'
   become: yes
+  tags:
+    - backup
+    - ssh
 
 - name: Backup existing RSA key
-  copy:
+  ansible.builtin.copy:
     src: "{{ ansible_user_dir }}/.ssh/id_rsa"
     dest: "{{ ssh_key_backup_path }}/id_rsa.bak"
     remote_src: yes
-  when: lookup('file', '{{ ansible_user_dir }}/.ssh/id_rsa')
+  when: ansible.builtin.lookup('ansible.builtin.file', '{{ ansible_user_dir }}/.ssh/id_rsa')
+  tags:
+    - backup
+    - ssh
 
 - name: Backup existing ED25519 key
-  copy:
+  ansible.builtin.copy:
     src: "{{ ansible_user_dir }}/.ssh/id_ed25519"
     dest: "{{ ssh_key_backup_path }}/id_ed25519.bak"
     remote_src: yes
-  when: lookup('file', '{{ ansible_user_dir }}/.ssh/id_ed25519')
+  when: ansible.builtin.lookup('ansible.builtin.file', '{{ ansible_user_dir }}/.ssh/id_ed25519')
+  tags:
+    - backup
+    - ssh

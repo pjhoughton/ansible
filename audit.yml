@@ -1,0 +1,6 @@
+---
+- name: Run system inventory role
+  hosts: all
+  become: yes
+  roles:
+    - audit

@@ -1,18 +1,12 @@
-<<<<<<< HEAD
 ---
-- name: Install software packages
-  become: yes
-  aptitude:
-    name: "{{ item }}"
-    state: latest
-  loop: "{{ software_list }}"
-=======
----
-# roles/Software_Management/tasks/aptitude_software_install.yml
+# tasks file for aptitude_software_install
+
 - name: Install software packages
   become: yes
   ansible.builtin.aptitude:
     name: "{{ item }}"
     state: latest
   loop: "{{ software_list }}"
->>>>>>> 3370257 (updates)
+  tags:
+    - aptitude
+    - software_install

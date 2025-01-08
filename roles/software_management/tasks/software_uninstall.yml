@@ -1,18 +1,13 @@
-<<<<<<< HEAD
 ---
-- name: Install software packages
-  become: yes
-  aptitude:
-    name: "{{ item }}"
-    state: absent
-  loop: "{{ software_uninstall_list }}"
-=======
----
-# roles/safe_upgrade/tasks/software_uninstall.yml
+# tasks file for software_uninstall
+
 - name: Uninstall software packages
   become: yes
   ansible.builtin.aptitude:
     name: "{{ item }}"
     state: absent
   loop: "{{ software_uninstall_list }}"
->>>>>>> 3370257 (updates)
+  tags:
+    - software
+    - uninstall
+    - aptitude

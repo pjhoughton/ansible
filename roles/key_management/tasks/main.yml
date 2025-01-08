@@ -1,7 +1,20 @@
 ---
 # tasks file for key_management
----
-- include_tasks: create_keys.yml
-- include_tasks: backup_keys.yml
-- include_tasks: delete_backups.yml
 
+- name: Include tasks to create SSH keys
+  ansible.builtin.include_tasks: create_keys.yml
+  tags:
+    - ssh
+    - key_management
+
+- name: Include tasks to backup SSH keys
+  ansible.builtin.include_tasks: backup_keys.yml
+  tags:
+    - ssh
+    - key_management
+
+- name: Include tasks to delete SSH key backups
+  ansible.builtin.include_tasks: delete_backups.yml
+  tags:
+    - ssh
+    - key_management

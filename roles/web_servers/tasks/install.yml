@@ -1,3 +1,4 @@
+---
 # roles/webserver/tasks/install.yml
 
 - name: Install Nginx or Apache2
@@ -8,3 +9,9 @@
     - "{{ webserver_package }}"
   notify:
     - Restart web server
+  tags:
+    - webserver
+    - install
+    - apt
+    - nginx
+    - apache2

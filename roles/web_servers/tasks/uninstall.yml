@@ -1,3 +1,4 @@
+---
 # roles/webserver/tasks/uninstall.yml
 
 - name: Uninstall Nginx or Apache2
@@ -8,3 +9,9 @@
     - "{{ webserver_package }}"
   notify:
     - Stop web server
+  tags:
+    - webserver
+    - uninstall
+    - apt
+    - nginx
+    - apache2

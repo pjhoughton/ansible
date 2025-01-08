@@ -1,5 +1,20 @@
 ---
 # tasks file for server_deploy
-- include_tasks: swap_file.yml
-- include_tasks: disable_ipv6.yml
-- include_tasks: set_timezone.yml
+
+- name: Include tasks for managing swap file
+  ansible.builtin.include_tasks: swap_file.yml
+  tags:
+    - server_deploy
+    - swap
+
+- name: Include tasks for disabling IPv6
+  ansible.builtin.include_tasks: disable_ipv6.yml
+  tags:
+    - server_deploy
+    - ipv6
+
+- name: Include tasks for setting timezone
+  ansible.builtin.include_tasks: set_timezone.yml
+  tags:
+    - server_deploy
+    - timezone

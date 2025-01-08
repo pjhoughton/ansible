@@ -1,0 +1,8 @@
+Hostname: {{ hostname }}
+CPU Usage: {{ cpu_usage.stdout }}
+Memory Usage: {{ memory_usage.stdout }}%
+IP Address: {{ ip_address }}
+Disk Size and Free Space: {{ disk_info.stdout }}
+Swap File Usage: {{ swap_usage.stdout }}%
+Users: {{ users.stdout_lines | join(', ') }}
+Firewall Status: {{ firewall_status.stdout }}

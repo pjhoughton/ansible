@@ -1,24 +1,32 @@
 ---
-- name: Ensure IPv6 is disabled
-  hosts: all
-  become: yes
-  tasks:
-    - name: Check if IPv6 is enabled
-      command: sysctl net.ipv6.conf.all.disable_ipv6
-      register: ipv6_status
+# tasks file for disable_ipv6 role
 
-    - name: Disable IPv6
-      sysctl:
-        name: net.ipv6.conf.all.disable_ipv6
-        value: 1
-        state: present
-      when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
-      notify: Reload sysctl
+- name: Check if IPv6 is enabled
+  ansible.builtin.command:
+    cmd: sysctl net.ipv6.conf.all.disable_ipv6
+  register: ipv6_status
+  tags:
+    - ipv6
+    - check
 
-    - name: Persist IPv6 disable
-      lineinfile:
-        path: /etc/sysctl.conf
-        line: 'net.ipv6.conf.all.disable_ipv6 = 1'
-        state: present
-      when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
-      notify: Reload sysctl
+- name: Disable IPv6
+  ansible.builtin.sysctl:
+    name: net.ipv6.conf.all.disable_ipv6
+    value: 1
+    state: present
+  when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
+  notify: Reload sysctl
+  tags:
+    - ipv6
+    - disable
+
+- name: Persist IPv6 disable
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    line: 'net.ipv6.conf.all.disable_ipv6 = 1'
+    state: present
+  when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
+  notify: Reload sysctl
+  tags:
+    - ipv6
+    - persist

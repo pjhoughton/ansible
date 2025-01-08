@@ -1,21 +1,38 @@
+---
 # roles/webserver/handlers/main.yml
 
 - name: Start web server
   ansible.builtin.service:
     name: "{{ webserver_service }}"
     state: started
+  tags:
+    - webserver
+    - start
+    - service
 
 - name: Stop web server
   ansible.builtin.service:
     name: "{{ webserver_service }}"
     state: stopped
+  tags:
+    - webserver
+    - stop
+    - service
 
 - name: Restart web server
   ansible.builtin.service:
     name: "{{ webserver_service }}"
     state: restarted
+  tags:
+    - webserver
+    - restart
+    - service
 
 - name: Reload web server
   ansible.builtin.service:
     name: "{{ webserver_service }}"
     state: reloaded
+  tags:
+    - webserver
+    - reload
+    - service

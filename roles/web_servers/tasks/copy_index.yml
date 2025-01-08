@@ -1,3 +1,4 @@
+---
 # roles/webserver/tasks/copy_index.yml
 
 - name: Copy index.html
@@ -6,3 +7,7 @@
     dest: /var/www/html/index.html
   notify:
     - Reload web server
+  tags:
+    - webserver
+    - copy
+    - index

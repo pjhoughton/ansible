@@ -1,0 +1,68 @@
+---
+- name: Create ansible tmp directory for reports
+  ansible.builtin.file:
+    path: /tmp/ansible
+    state: directory
+
+- name: Gather hostname
+  ansible.builtin.set_fact:
+    hostname: "{{ ansible_hostname }}"
+
+- name: Gather CPU usage
+  ansible.builtin.shell: 
+    cmd: "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1\"%\"}'"
+  register: cpu_usage
+  changed_when: false
+
+- name: Gather memory usage
+  ansible.builtin.shell:
+    cmd: "free -m | grep Mem | awk '{print $3/$2 * 100.0}'"
+  register: memory_usage
+  changed_when: false
+
+- name: Gather IP address
+  ansible.builtin.set_fact:
+    ip_address: "{{ ansible_default_ipv4.address }}"
+
+- name: Gather disk size and free space
+  ansible.builtin.shell:
+    cmd: "df -h --output=size,avail / | tail -1"
+  register: disk_info
+  changed_when: false
+
+- name: Gather swap file usage
+  ansible.builtin.shell:
+    cmd: "free -m | grep Swap | awk '{print $3/$2 * 100.0}'"
+  register: swap_usage
+  changed_when: false
+
+- name: Gather list of users
+  ansible.builtin.shell:
+    cmd: "cut -d: -f1 /etc/passwd"
+  register: users
+  changed_when: false
+
+- name: Check firewall status
+  ansible.builtin.shell:
+    cmd: "sudo ufw status"
+  register: firewall_status
+  changed_when: false
+
+- name: Create individual inventory report
+  ansible.builtin.template:
+    src: inventory_report.j2
+    dest: "/tmp/ansible/{{ inventory_hostname }}_inventory_report.txt"
+
+- name: Collect individual reports
+  delegate_to: localhost
+  run_once: true
+  ansible.builtin.fetch:
+    src: "/tmp/ansible/{{ inventory_hostname }}_inventory_report.txt"
+    dest: "/tmp/ansible/all_hosts_reports/"
+    flat: yes
+
+- name: Concatenate all reports into one
+  delegate_to: localhost
+  run_once: true
+  ansible.builtin.shell: |
+    cat /tmp/ansible/all_hosts_reports/* > /tmp/ansible/inventory_report.txt

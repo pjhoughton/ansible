@@ -1,8 +1,18 @@
 ---
+# tasks file for setting_timezone
+
 - name: Check the current timezone
-  command: timedatectl show -p Timezone --value
+  ansible.builtin.command: 
+    cmd: timedatectl show -p Timezone --value
   register: current_timezone
+  tags:
+    - timezone
+    - check
 
 - name: Set timezone
-  command: timedatectl set-timezone {{ timezone }}
+  ansible.builtin.command: 
+    cmd: timedatectl set-timezone {{ timezone }}
   when: current_timezone.stdout != timezone
+  tags:
+    - timezone
+    - set

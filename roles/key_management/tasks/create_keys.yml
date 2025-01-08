@@ -1,19 +1,32 @@
 ---
+# tasks file for ssh_key_generation
+
 - name: Ensure .ssh directory exists
-  file:
+  ansible.builtin.file:
     path: "{{ ansible_user_dir }}/.ssh"
     state: directory
     mode: '0700'
   become: yes
+  tags:
+    - ssh
+    - setup
 
 - name: Generate RSA key
-  command: ssh-keygen -t rsa -b {{ rsa_key_size }} -f {{ ansible_user_dir }}/.ssh/id_rsa -N ""
+  ansible.builtin.command: 
+    cmd: ssh-keygen -t rsa -b {{ rsa_key_size }} -f {{ ansible_user_dir }}/.ssh/id_rsa -N ""
   args:
     creates: "{{ ansible_user_dir }}/.ssh/id_rsa"
   become: yes
+  tags:
+    - ssh
+    - rsa
 
 - name: Generate ED25519 key
-  command: ssh-keygen -t ed25519 -b {{ ed25519_key_size }} -f {{ ansible_user_dir }}/.ssh/id_ed25519 -N ""
+  ansible.builtin.command: 
+    cmd: ssh-keygen -t ed25519 -b {{ ed25519_key_size }} -f {{ ansible_user_dir }}/.ssh/id_ed25519 -N ""
   args:
     creates: "{{ ansible_user_dir }}/.ssh/id_ed25519"
   become: yes
+  tags:
+    - ssh
+    - ed25519
