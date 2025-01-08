@@ -1,9 +1,8 @@
----
 # roles/webserver/tasks/copy_index.yml
 
 - name: Copy index.html
-  copy:
-    src: files/index.html
+  ansible.builtin.copy:
+    src: roles/webserver/files/index.html
     dest: /var/www/html/index.html
   notify:
     - Reload web server

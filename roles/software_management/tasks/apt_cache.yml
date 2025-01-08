@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 - name: Ensure update cache is up to date
   apt:
@@ -14,3 +15,22 @@
   apt:
     autoremove: yes
   when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+=======
+---
+# roles/Software_Management/tasks/apt_cache.yml
+- name: Ensure update cache is up to date
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+
+- name: Ensure autoclean is set
+  ansible.builtin.apt:
+    autoclean: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+
+- name: Ensure autoremove is set
+  ansible.builtin.apt:
+    autoremove: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+>>>>>>> 3370257 (updates)

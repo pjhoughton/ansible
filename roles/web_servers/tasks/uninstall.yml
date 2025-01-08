@@ -1,8 +1,7 @@
----
 # roles/webserver/tasks/uninstall.yml
 
 - name: Uninstall Nginx or Apache2
-  apt:
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: absent
   with_items:

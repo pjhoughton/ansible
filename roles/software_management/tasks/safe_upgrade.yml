@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # roles/safe_upgrade/tasks/safe_upgrade.yml
 ---
 - name: Ensure aptitude is installed
@@ -28,3 +29,37 @@
 - name: Upgrade all packages using aptitude
   command: aptitude safe-upgrade -y
   when: upgrade_required
+=======
+# roles/safe_upgrade/tasks/safe_upgrade.yml
+---
+- name: Ensure aptitude is installed
+  ansible.builtin.apt:
+    name: aptitude
+    state: present
+    update_cache: yes
+    autoremove: yes
+    autoclean: yes
+    cache_valid_time: 3600
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+
+- name: Check if any upgrades are available using apt-get
+  ansible.builtin.command:
+    cmd: apt-get -s dist-upgrade
+  register: upgrade_check
+  changed_when: false
+  check_mode: no
+
+- name: Set upgrade_required fact
+  ansible.builtin.set_fact:
+    upgrade_required: "{{ 'The following packages will be upgraded:' in upgrade_check.stdout }}"
+
+- name: Print upgradeable packages only if there are updates
+  ansible.builtin.debug:
+    msg: "{{ upgrade_check.stdout_lines }}"
+  when: upgrade_required
+
+- name: Upgrade all packages using aptitude
+  ansible.builtin.command:
+    cmd: aptitude safe-upgrade -y
+  when: upgrade_required
+>>>>>>> 3370257 (updates)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 # tasks file for workstations
 
@@ -26,3 +27,32 @@
     name: ansible
     state: latest
 
+=======
+# roles/workstations/tasks/main.yml
+
+- name: Ensure software-properties-common is installed
+  ansible.builtin.apt:
+    name: software-properties-common
+    state: present
+  tags:
+    - workstations
+    - ansible
+
+- name: Add Ansible APT repository for binary packages
+  ansible.builtin.apt_repository:
+    repo: 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu focal main'
+    state: present
+
+- name: Add Ansible APT repository for source packages
+  ansible.builtin.apt_repository:
+    repo: 'deb-src http://ppa.launchpad.net/ansible/ansible/ubuntu focal main'
+    state: present
+
+- name: Install Ansible
+  ansible.builtin.apt:
+    name: ansible
+    state: latest
+  tags:
+    - workstations
+    - ansible
+>>>>>>> 3370257 (updates)

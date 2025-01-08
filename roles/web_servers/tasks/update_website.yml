@@ -1,9 +1,8 @@
----
 # roles/webserver/tasks/update_website.yml
 
 - name: Update website files
-  synchronize:
-    src: files/website/
+  ansible.builtin.synchronize:
+    src: roles/webserver/files/website/
     dest: /var/www/html/
   notify:
     - Reload web server

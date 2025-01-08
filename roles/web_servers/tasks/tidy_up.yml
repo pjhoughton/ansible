@@ -1,7 +1,6 @@
----
 # roles/webserver/tasks/tidy_up.yml
 
 - name: Remove website files
-  file:
+  ansible.builtin.file:
     path: /var/www/html/
     state: absent

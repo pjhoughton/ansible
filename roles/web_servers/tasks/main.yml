@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 # roles/webserver/tasks/main.yml
 
@@ -18,3 +19,30 @@
 
 - name: Tidy up
   include_tasks: tidy_up.yml
+=======
+# roles/webserver/tasks/main.yml
+
+- name: Install web server
+  ansible.builtin.include_tasks:
+    file: install.yml
+
+- name: Copy index.html
+  ansible.builtin.include_tasks:
+    file: copy_index.yml
+
+- name: Copy website
+  ansible.builtin.include_tasks:
+    file: copy_website.yml
+
+- name: Update website
+  ansible.builtin.include_tasks:
+    file: update_website.yml
+
+- name: Uninstall web server
+  ansible.builtin.include_tasks:
+    file: uninstall.yml
+
+- name: Tidy up
+  ansible.builtin.include_tasks:
+    file: tidy_up.yml
+>>>>>>> 3370257 (updates)

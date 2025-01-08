@@ -1,10 +1,8 @@
-
----
 # roles/webserver/tasks/copy_website.yml
 
 - name: Copy website files
-  copy:
-    src: files/website/
+  ansible.builtin.copy:
+    src: roles/webserver/files/website/
     dest: /var/www/html/
   notify:
     - Reload web server

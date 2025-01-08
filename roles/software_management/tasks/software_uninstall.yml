@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 - name: Install software packages
   become: yes
@@ -5,3 +6,13 @@
     name: "{{ item }}"
     state: absent
   loop: "{{ software_uninstall_list }}"
+=======
+---
+# roles/safe_upgrade/tasks/software_uninstall.yml
+- name: Uninstall software packages
+  become: yes
+  ansible.builtin.aptitude:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ software_uninstall_list }}"
+>>>>>>> 3370257 (updates)
