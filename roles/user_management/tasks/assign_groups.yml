@@ -1,0 +1,11 @@
+---
+# tasks file for assigning groups to a user
+
+- name: Assign groups to the user
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups: "{{ groups }}"
+    append: yes
+  tags:
+    - user_management
+    - assign_groups

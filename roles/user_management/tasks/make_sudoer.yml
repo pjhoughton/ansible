@@ -1,0 +1,12 @@
+---
+# tasks file for making the user a sudoer
+
+- name: Make user a sudoer
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: "{{ new_user }} ALL=(ALL) NOPASSWD:ALL"
+    state: present
+  validate: 'visudo -cf %s'
+  tags:
+    - user_management
+    - make_sudoer

@@ -1,0 +1,10 @@
+---
+# tasks file for deleting a user
+
+- name: Delete a user
+  ansible.builtin.user:
+    name: "{{ user_to_delete }}"
+    state: absent
+  tags:
+    - user_management
+    - delete_user

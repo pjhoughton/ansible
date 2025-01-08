@@ -1,2 +1,17 @@
 ---
-# vars file for user_management
+# variables file for user_management role
+
+#users:
+# - name: 'example_user1'
+#    home: '/home/example_user1'
+#    groups: 'sudo,dialout'
+#    sudoer: True
+#  - name: 'example_user2'
+#    home: '/home/example_user2'
+#    groups: 'sudo,dialout'
+#    sudoer: False
+#  - name: 'example_user3'
+#    home: '/home/example_user3'
+#    groups: 'sudo,dialout'
+#   sudoer: True
+# user_to_delete:

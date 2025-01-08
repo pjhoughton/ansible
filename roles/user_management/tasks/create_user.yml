@@ -1,0 +1,37 @@
+---
+# tasks file for creating multiple users with home folders and adding them to groups
+
+- name: Create new users with home folders
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    home: "{{ item.home }}"
+    create_home: yes
+    state: present
+    groups: "{{ item.groups }}"
+  loop: "{{ users }}"
+  tags:
+    - user_management
+    - create_user
+
+- name: Set ownership and permissions of home folders
+  ansible.builtin.file:
+    path: "{{ item.home }}"
+    owner: "{{ item.name }}"
+    group: "{{ item.groups | first }}"  # Assuming the first group in the list is the primary group
+    mode: '0755'
+  loop: "{{ users }}"
+  tags:
+    - user_management
+    - set_permissions
+
+- name: Make user a sudoer
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+    state: present
+  validate: 'visudo -cf %s'
+  when: item.sudoer | default(False)
+  loop: "{{ users }}"
+  tags:
+    - user_management
+    - make_sudoer
