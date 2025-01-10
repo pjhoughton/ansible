@@ -1,0 +1,43 @@
+---
+- name: Manage sudo privileges for users
+  hosts: all
+  become: yes
+  vars:
+    users:
+      - { name: "user1", sudoer: True }
+      - { name: "user2", sudoer: True }
+      - { name: "user3", sudoer: False }
+
+  tasks:
+    - name: Ensure sudoers.d directory exists
+      ansible.builtin.file:
+        path: /etc/sudoers.d
+        state: directory
+        mode: '0750'
+
+    - name: Ensure user sudoers file exists with correct permissions
+      ansible.builtin.copy:
+        dest: "/etc/sudoers.d/{{ item.name }}"
+        content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+        mode: '0440'
+      loop: "{{ users }}"
+      when: item.sudoer | default(False)
+
+    - name: Validate sudoers file
+      ansible.builtin.command:
+        cmd: 'visudo -cf /etc/sudoers.d/{{ item.name }}'
+      loop: "{{ users }}"
+      when: item.sudoer | default(False)
+      register: visudo_check
+      ignore_errors: yes
+
+    - name: Check validation results
+      ansible.builtin.debug:
+        var: visudo_check
+
+    - name: Clean up invalid sudoers files
+      ansible.builtin.file:
+        path: "/etc/sudoers.d/{{ item.name }}"
+        state: absent
+      loop: "{{ users }}"
+      when: item.sudoer | default(False) and visudo_check.results[loop.index0].rc != 0

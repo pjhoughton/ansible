@@ -22,7 +22,7 @@
       - always
     user:
       name: usr_ansible
-      groups: sudo
+      groups: root
       
 # Add ansible SHH Key to user 
       
@@ -42,7 +42,7 @@
       src: sudoer_usr_ansible
       dest: /etc/sudoers.d/usr_ansible
       owner: root
-      group: root
+      group: sudo
       mode: 0440
       
 
