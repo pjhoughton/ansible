@@ -4,6 +4,6 @@
   gather_facts: yes
   tasks:
     - name: Test connection
-      win_ping:
+      ansible.windows.win_ping:
       vars:
         ansible_winrm_server_cert_validation: ignore

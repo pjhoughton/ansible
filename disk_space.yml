@@ -1,14 +1,14 @@
 ---
-- name: check disk space
+- name: Check disk space
   hosts: all
-  become: true # needed for sudo 
+  become: true
   tasks:
     - name: Check available disk space
-      shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
+      ansible.builtin.shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
       register: disk_space
 
     - name: Ensure disk space is not critically low
-      debug:
+      ansible.builtin.debug:
         msg: |
           *************************************
           * WARNING: Disk space is critically low! *

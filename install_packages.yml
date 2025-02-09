@@ -1,140 +1,73 @@
 ---
-# Initial Configuration configuration for new build Ununtu Servers
+# Initial Configuration for new build Ubuntu Servers
 
-- name: install packages
+- name: Install packages and configure servers
   hosts: all
-  become: true # needed for sudo 
+  become: true
   tasks:
+
+    - name: Check disk space
+      ansible.builtin.debug:
+        var: my_secret
   
-  
-  - name: check disk space
-    debug:
-    var: my_secret
-  
-# Install Core Apps 
-  
-  - name: Install aptitude and cockpit
-    tags: 
-      - ubuntu
-      - aptitude
-      - cockpit
-    apt:
-      name: 
+    # Install Core Apps
+    - name: Install aptitude and cockpit
+      tags: 
+        - ubuntu
         - aptitude
         - cockpit
-      state: latest
-      update_cache: yes # best practice to update cache 
-    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
+      ansible.builtin.apt:
+        name: 
+          - aptitude
+          - cockpit
+        state: latest
+        update_cache: yes
+      when: ansible_facts['distribution'] in ["Debian", "Ubuntu"]
     
-# Setup Swap file
- 
-  - name: Check if swap file exists
-    tags:
-      - ubuntu
-    stat:
-      path: /swapfile
-    register: swapfile_exists
+    # Setup Swap file
+    - name: Check if swap file exists
+      tags:
+        - ubuntu
+      ansible.builtin.stat:
+        path: /swapfile
+      register: swapfile_exists
 
-  - name: Create swap file
-    command: fallocate -l 4G /swapfile
-    when: not swapfile_exists.stat.exists
+    - name: Create swap file
+      ansible.builtin.command: fallocate -l 4G /swapfile
+      when: not swapfile_exists.stat.exists
 
-  - name: Set swap file permissions
-    file:
-      path: /swapfile
-      mode: '0600'
-    when: not swapfile_exists.stat.exists
+    - name: Set swap file permissions
+      ansible.builtin.file:
+        path: /swapfile
+        mode: '0600'
+      when: not swapfile_exists.stat.exists
 
-  - name: Make swap file
-    command: mkswap /swapfile
-    when: not swapfile_exists.stat.exists
+    - name: Make swap file
+      ansible.builtin.command: mkswap /swapfile
+      when: not swapfile_exists.stat.exists
 
-  - name: Enable swap file
-    command: swapon /swapfile
-    when: not swapfile_exists.stat.exists
+    - name: Enable swap file
+      ansible.builtin.command: swapon /swapfile
+      when: not swapfile_exists.stat.exists
 
-  - name: Add swap to fstab
-    lineinfile:
-      path: /etc/fstab
-      line: '/swapfile none swap sw 0 0'
-      create: yes
-    when: not swapfile_exists.stat.exists
+    - name: Add swap to fstab
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        line: '/swapfile none swap sw 0 0'
+        create: yes
+      when: not swapfile_exists.stat.exists
     
-  - name: Check the current timezone
-    command: timedatectl show -p Timezone --value
-    register: current_timezone
+    - name: Check the current timezone
+      ansible.builtin.command: timedatectl show -p Timezone --value
+      register: current_timezone
 
-  - name: Set timezone to Europe/London
-    command: timedatectl set-timezone Europe/London
-    when: current_timezone.stdout != 'Europe/London'
+    - name: Set timezone to Europe/London
+      ansible.builtin.command: timedatectl set-timezone Europe/London
+      when: current_timezone.stdout != 'Europe/London'
 
-# Disable IPVG 
-    
-  - name: Check if IPv6 is enabled
-    command: sysctl net.ipv6.conf.all.disable_ipv6
-    register: ipv6_status
+    # Disable IPv6
+    - name: Check if IPv6 is enabled
+      ansible.builtin.command: sysctl net.ipv6.conf.all.disable_ipv6
+      register: ipv6_status
 
-  - name: Disable IPv6
-    sysctl:
-      name: net.ipv6.conf.all.disable_ipv6
-      value: 1
-      state: present
-    when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
-
-  - name: Persist IPv6 disable
-    lineinfile:
-      path: /etc/sysctl.conf
-      line: 'net.ipv6.conf.all.disable_ipv6 = 1'
-      state: present
-    when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
-
-  - name: Reload sysctl
-    command: sysctl -p
-    when: ipv6_status.stdout == 'net.ipv6.conf.all.disable_ipv6 = 0'
-
-
-
-# Start File Server Tasks 
-
-- hosts: file_servers
-  become: true # needed for sudo 
-  tasks:
-  - name: Install nfs common 
-    tags: 
-      - ubuntu,nfs-common
-      - file_servers
-    apt:
-      name: nfs-common
-      state: latest 
-    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-    
-    
-    
-- hosts: workstations
-  become: true # needed for sudo 
-  tasks:
-  - name: Install logrotate
-    apt:
-      name: logrotate
-      state: present
-
-  - name: Create logrotate configuration for custom log file
-    copy:
-      dest: /etc/logrotate.d/customlog
-      content: |
-          /var/log/custom.log {
-            daily
-            rotate 7
-            compress
-            delaycompress
-            missingok
-            notifempty
-            create 0640 root utmp
-          }
- 
-    
-    
-  
-    
-  
-    
+    - name: Disable

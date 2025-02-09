@@ -4,9 +4,9 @@
   become: yes
   vars:
     users:
-      - { name: "user1", sudoer: True }
-      - { name: "user2", sudoer: True }
-      - { name: "user3", sudoer: False }
+      - { name: "user1", sudoer: true }
+      - { name: "user2", sudoer: true }
+      - { name: "user3", sudoer: false }
 
   tasks:
     - name: Ensure sudoers.d directory exists
@@ -21,13 +21,13 @@
         content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
         mode: '0440'
       loop: "{{ users }}"
-      when: item.sudoer | default(False)
+      when: item.sudoer | default(false)
 
     - name: Validate sudoers file
       ansible.builtin.command:
         cmd: 'visudo -cf /etc/sudoers.d/{{ item.name }}'
       loop: "{{ users }}"
-      when: item.sudoer | default(False)
+      when: item.sudoer | default(false)
       register: visudo_check
       ignore_errors: yes
 
@@ -40,4 +40,4 @@
         path: "/etc/sudoers.d/{{ item.name }}"
         state: absent
       loop: "{{ users }}"
-      when: item.sudoer | default(False) and visudo_check.results[loop.index0].rc != 0
+      when: item.sudoer | default(false) and visudo_check.results[loop.index0].rc != 0

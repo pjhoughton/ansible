@@ -1,33 +1,33 @@
 ---
-- name: safe upgrade
+- name: Safe upgrade
   hosts: all
-  become: true # needed for sudo
+  become: true
   tasks:
     - name: Ensure aptitude is installed
-      apt:
+      ansible.builtin.apt:
         name: aptitude
         state: present
         update_cache: yes
         autoremove: yes
         autoclean: yes
         cache_valid_time: 3600
-      when: ansible_distribution in ["Debian", "Ubuntu"] # filtering to specific distributions or versions as other distributions don't use apt
+      when: ansible_facts['distribution'] in ["Debian", "Ubuntu"]
 
     - name: Check if any upgrades are available using apt-get
-      command: apt-get -s dist-upgrade
+      ansible.builtin.command: apt-get -s dist-upgrade
       register: upgrade_check
       changed_when: false
       check_mode: no
 
     - name: Set upgrade_required fact
-      set_fact:
+      ansible.builtin.set_fact:
         upgrade_required: "{{ 'The following packages will be upgraded:' in upgrade_check.stdout }}"
 
     - name: Print upgradeable packages only if there are updates
-      debug:
+      ansible.builtin.debug:
         msg: "{{ upgrade_check.stdout_lines }}"
       when: upgrade_required
 
     - name: Upgrade all packages using aptitude
-      command: aptitude safe-upgrade -y
+      ansible.builtin.command: aptitude safe-upgrade -y
       when: upgrade_required

@@ -1,12 +1,12 @@
 ---
-- name: firewall status
+- name: Firewall status
   hosts: all
-  become: true # needed for sudo 
+  become: true
   tasks:
     - name: Check firewall status
-      shell: sudo ufw status
+      ansible.builtin.shell: sudo ufw status
       register: ufw_status
 
     - name: Display firewall status and rules
-      debug:
+      ansible.builtin.debug:
         msg: "{{ ufw_status.stdout_lines }}"

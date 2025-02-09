@@ -1,17 +1,14 @@
 ---
 - hosts: all
-  become: true # needed for sudo 
+  become: true
   tasks:
-  - name: Install Updates 
-    tags: 
-      - ubuntu
-      - always
-    apt:
-      upgrade: dist
-      update_cache: yes # best practice to update cache 
-      autoremove: yes
-      autoclean: yes
-    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-    
-
-    
+    - name: Install Updates 
+      tags: 
+        - ubuntu
+        - always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+        autoremove: yes
+        autoclean: yes
+      when: ansible_facts['distribution'] in ["Debian", "Ubuntu"]

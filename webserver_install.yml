@@ -9,7 +9,7 @@
     - role: webserver
   tasks:
     - name: Install web server
-      include_tasks: roles/webserver/tasks/install.yml
+      ansible.builtin.include_tasks: roles/webserver/tasks/install.yml
 
     - name: Copy index.html
-      include_tasks: roles/webserver/tasks/copy_index.yml
+      ansible.builtin.include_tasks: roles/webserver/tasks/copy_index.yml

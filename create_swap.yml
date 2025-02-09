@@ -1,48 +1,46 @@
 ---
-# Initial Configuration configuration for new build Ununtu Servers
+# Initial Configuration for new build Ubuntu Servers
 
-- name: create swapfile
+- name: Create and configure swapfile
   hosts: all
-  become: true # needed for sudo 
+  become: true
   tasks:
-   
-  - name: Check if swap file exists
-    tags:
-      - ubuntu
-    stat:
-      path: /swapfile
-    register: swapfile_exists
+    - name: Check if swap file exists
+      tags:
+        - ubuntu
+      ansible.builtin.stat:
+        path: /swapfile
+      register: swapfile_exists
 
-  - name: Create swap file
-    command: fallocate -l 4G /swapfile
-    when: not swapfile_exists.stat.exists
+    - name: Create swap file
+      ansible.builtin.command: fallocate -l 4G /swapfile
+      when: not swapfile_exists.stat.exists
 
-  - name: Set swap file permissions
-    file:
-      path: /swapfile
-      mode: '0600'
-    when: not swapfile_exists.stat.exists
+    - name: Set swap file permissions
+      ansible.builtin.file:
+        path: /swapfile
+        mode: '0600'
+      when: not swapfile_exists.stat.exists
 
-  - name: Make swap file
-    command: mkswap /swapfile
-    when: not swapfile_exists.stat.exists
+    - name: Make swap file
+      ansible.builtin.command: mkswap /swapfile
+      when: not swapfile_exists.stat.exists
 
-  - name: Enable swap file
-    command: swapon /swapfile
-    when: not swapfile_exists.stat.exists
+    - name: Enable swap file
+      ansible.builtin.command: swapon /swapfile
+      when: not swapfile_exists.stat.exists
 
-  - name: Add swap to fstab
-    lineinfile:
-      path: /etc/fstab
-      line: '/swapfile none swap sw 0 0'
-      create: yes
-    when: not swapfile_exists.stat.exists
-    
-  - name: Check the current timezone
-    command: timedatectl show -p Timezone --value
-    register: current_timezone
+    - name: Add swap to fstab
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        line: '/swapfile none swap sw 0 0'
+        create: yes
+      when: not swapfile_exists.stat.exists
 
-  - name: Set timezone to Europe/London
-    command: timedatectl set-timezone Europe/London
-    when: current_timezone.stdout != 'Europe/London'
+    - name: Check the current timezone
+      ansible.builtin.command: timedatectl show -p Timezone --value
+      register: current_timezone
 
+    - name: Set timezone to Europe/London
+      ansible.builtin.command: timedatectl set-timezone Europe/London
+      when: current_timezone.stdout != 'Europe/London'

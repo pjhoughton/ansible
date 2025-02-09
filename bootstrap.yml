@@ -1,49 +1,40 @@
 ---
+# Bootstrap configuration for new build Ubuntu Servers that need to be administrated by Ansible
 
-# Bootstrap configurationtion  for new build Ununtu Servers that need to be administrated by  Ansible
-
-- name: bootstrap
+- name: Bootstrap new Ubuntu servers
   hosts: all
-  become: true # needed for sudo 
+  become: true
   tasks:
-  - name: Install Updates 
-    tags: 
-      - ubuntu
-      - always
-    apt:
-      upgrade: dist
-      update_cache: yes # best practice to update cache 
-    when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-    
-# Create Ansible User that will execute all Plays 
-    
-  - name: Create Ansible User
-    tags: 
-      - always
-    user:
-      name: usr_ansible
-      groups: root
-      
-# Add ansible SHH Key to user 
-      
-  - name: add ssh key for usr_ansible
-    tags: 
-      - always
-    authorized_key:
-      user: usr_ansible
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
-      
-# Make ansible user not need to sudo 
-      
-  - name: add suduoers file for usr_ansible
-    tags: 
-      - always
-    copy:
-      src: sudoer_usr_ansible
-      dest: /etc/sudoers.d/usr_ansible
-      owner: root
-      group: sudo
-      mode: 0440
-      
+    - name: Install updates
+      tags: 
+        - ubuntu
+        - always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_facts['distribution'] in ["Debian", "Ubuntu"]
 
-      
+    - name: Create Ansible user
+      tags: 
+        - always
+      ansible.builtin.user:
+        name: usr_ansible
+        groups: root
+        state: present
+
+    - name: Add SSH key for usr_ansible
+      tags: 
+        - always
+      ansible.builtin.authorized_key:
+        user: usr_ansible
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
+
+    - name: Add sudoers file for usr_ansible
+      tags: 
+        - always
+      ansible.builtin.copy:
+        src: sudoer_usr_ansible
+        dest: /etc/sudoers.d/usr_ansible
+        owner: root
+        group: root
+        mode: '0440'

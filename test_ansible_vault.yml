@@ -5,5 +5,5 @@
     - demo_vault.yml
   tasks:
     - name: Show the secret
-      debug:
+      ansible.builtin.debug:
         msg: "The secret password is {{ my_secret }}"

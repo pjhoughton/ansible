@@ -4,7 +4,7 @@
   gather_facts: false
   tasks:
     - name: Show hosts by OS and type
-      debug:
+      ansible.builtin.debug:
         msg: |
           Windows Servers:
           Web Servers:
@@ -49,7 +49,7 @@
           {% endfor %}
 
     - name: Show hosts by production/test and type
-      debug:
+      ansible.builtin.debug:
         msg: |
           Production:
           Web Servers:

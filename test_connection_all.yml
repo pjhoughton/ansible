@@ -1,7 +1,8 @@
+---
 - name: Test ansible connection
   hosts: all:!windows_servers
   gather_facts: yes
   tasks:
     - name: Test connection on Debian/Ubuntu hosts
-      ping:
+      ansible.builtin.ping:
       when: ansible_distribution in ["Debian", "Ubuntu"]

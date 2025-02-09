@@ -1,15 +1,15 @@
 ---
-- hosts: all
+- name: Update repository Index for all hosts
+  hosts: all
   become: true
   pre_tasks:
-   - name: Update repository Index
-     tags: 
-       - always
-     apt:
-       update_cache: yes
-     changed_when: false 
-     when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-
+    - name: Update repository index
+      tags: 
+        - always
+      ansible.builtin.apt:
+        update_cache: yes
+      changed_when: false
+      when: ansible_facts['distribution'] in ["Debian", "Ubuntu"]
 
 - hosts: all
   become: true
@@ -18,9 +18,9 @@
     - software_updates
     
 - hosts: db_servers
-  become: true 
+  become: true
   roles:
-   - db_servers
+    - db_servers
     
 - hosts: docker_servers
   become: true
@@ -28,23 +28,21 @@
     - docker_servers
     
 - hosts: file_servers
-  become: true # needed for sudo 
+  become: true
   roles:
     - file_servers
    
 - hosts: web_servers
-  become: true # needed for sudo 
+  become: true
   roles:
     - web_servers
     
 - hosts: workstations
-  become: true # needed for sudo 
+  become: true
   roles:
     - workstations
     
 - hosts: xcp_servers
-  become: true # needed for sudo 
+  become: true
   roles:
     - xcp_servers
-   
-   
