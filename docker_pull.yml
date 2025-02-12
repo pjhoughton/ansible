@@ -1,9 +1,9 @@
----
-- name: Pull Docker images using Docker Compose
+
+- name: Pull Docker images using Docker Compose v2
   hosts: docker_servers
   tasks:
     - name: Pull images defined in docker-compose.yml
       community.docker.docker_compose_v2:
         project_src: /home/paul/docker-compose
         state: present
-        pull: true
+        pull: always
