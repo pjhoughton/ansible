@@ -1,12 +1,12 @@
 # roles/safe_upgrade/tasks/main.yml
 
-- ansible.builtin.include_tasks:
-    file: apt_cache.yml
-- ansible.builtin.include_tasks:
-    file: safe_upgrade.yml
-- ansible.builtin.include_tasks:
-    file: software_install.yml
-- ansible.builtin.include_tasks:
-    file: aptitude_software_install.yml
-- ansible.builtin.include_tasks:
-    file: software_uninstall.yml
+#- ansible.builtin.include_tasks:
+#    file: apt_cache.yml
+#- ansible.builtin.include_tasks:
+#    file: safe_upgrade.yml
+#- ansible.builtin.include_tasks:
+#    file: software_install.yml
+#- ansible.builtin.include_tasks:
+#    file: aptitude_software_install.yml
+#- ansible.builtin.include_tasks:
+#    file: software_uninstall.yml
