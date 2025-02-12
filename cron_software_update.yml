@@ -1,0 +1,12 @@
+---
+- name: Add a cron job to run the update and upgrade playbook daily with custom ansible.cfg
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Create a cron job to run the update and upgrade playbook
+      ansible.builtin.cron:
+        name: "Daily update and upgrade"
+        minute: "0"
+        hour: "2"
+        job: "ANSIBLE_CONFIG=/home/myhome/ansible/ansible.cfg /usr/bin/ansible-playbook /path/to/update_and_upgrade_with_role.yml"

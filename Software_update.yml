@@ -1,0 +1,10 @@
+---
+- name: Update APT cache and perform a safe upgrade using software_Management role
+  hosts: all
+  become: yes
+
+  roles:
+    - role: software_management
+      tasks_from: 
+        - apt_cache.yml
+        - safe_upgrade.yml
