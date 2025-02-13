@@ -1,6 +1,3 @@
----
-# tasks file for software_uninstall
-
 - name: Uninstall software packages
   become: yes
   community.general.aptitude:
@@ -11,5 +8,3 @@
     - software
     - uninstall
     - aptitude
-
-

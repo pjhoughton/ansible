@@ -1,13 +1,10 @@
----
-# tasks file for software_install
-
-- name: Install software packages
+- name: Uninstall software packages
   become: yes
   community.general.aptitude:
     name: "{{ item }}"
     state: latest
-  loop: "{{ software_list }}"
+  loop: "{{ software_uninstall_list }}"
   tags:
     - software
-    - install
-    - apt
+    - uninstall
+    - aptitude
