@@ -1,0 +1,26 @@
+---
+- name: Check Firewall Status Playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check if firewall is enabled
+      command: ufw status
+      register: ufw_status
+      changed_when: false
+
+    - name: Print firewall status
+      debug:
+        msg: >
+          Firewall status on {{ inventory_hostname }}:
+          {% if "inactive" in ufw_status.stdout %}
+          Status: Inactive
+          {% else %}
+          Status: Active
+          {% for line in ufw_status.stdout.split('\n') %}
+          {% if line.startswith("To") or line.startswith("--") %}
+          {{ line }}
+          {% elif line.split() | length >= 3 %}
+          Port/Service: {{ line.split()[0] }}  |  Action: {{ line.split()[1] }}  |  From: {{ ' '.join(line.split()[2:]) }}
+          {% endif %}
+          {% endfor %}
+          {% endif %}

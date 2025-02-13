@@ -1,0 +1,38 @@
+---
+- name: Ping and Gather Facts Playbook
+  hosts: all
+  tasks:
+    - name: Ping Linux Servers
+      ping:
+      when: ansible_system is defined and ansible_system in ['Linux', 'Darwin']
+
+    - name: Ping Windows Servers
+      win_ping:
+      when: ansible_system is defined and ansible_system == 'Windows'
+
+    - name: Gather facts
+      ansible.builtin.setup:
+
+    - name: Print gathered facts for Linux
+      debug:
+        msg: >
+          Hostname: {{ ansible_hostname }}
+          IP Address: {{ ansible_all_ipv4_addresses | join(', ') }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Memory: {{ ansible_memtotal_mb }} MB
+          CPU Cores: {{ ansible_processor_cores }}
+          FQDN: {{ ansible_fqdn }}
+          Ansible Version: {{ ansible_version.full }}
+      when: ansible_system is defined and ansible_system in ['Linux', 'Darwin']
+
+    - name: Print gathered facts for Windows
+      debug:
+        msg: >
+          Hostname: {{ ansible_hostname }}
+          IP Address: {{ ansible_all_ipv4_addresses | join(', ') }}
+          OS: Windows
+          Memory: {{ ansible_memtotal_mb }} MB
+          CPU Cores: {{ ansible_processor_cores }}
+          FQDN: {{ ansible_fqdn }}
+          Ansible Version: {{ ansible_version.full }}
+      when: ansible_system is defined and ansible_system == 'Windows'

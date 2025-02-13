@@ -23,12 +23,3 @@
   tags:
     - user_management
     - set_permissions
-
-
-- name: Make user a sudoer
-  ansible.builtin.lineinfile:
-    path: "/etc/sudoers.d/{{ item.name }}"
-    line: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
-    state: present
-  validate: 'visudo -cf %s'
-  when: item.sudoer | default(False)
