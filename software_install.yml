@@ -1,24 +1,11 @@
-- name: Update APT cache and perform a safe upgrade using software_updates role
-  hosts: all
+---
+- name: Safe install software packages
   become: yes
-
-  roles:
-    - role: software_management
-
-  tasks:
-    - name: Check if the system is Ubuntu or Debian
-      ansible.builtin.shell: cat /etc/os-release
-      register: os_release
-
-    - name: Ensure the playbook runs only on Ubuntu or Debian systems
-      ansible.builtin.debug:
-        msg: "This playbook is only for Ubuntu or Debian systems."
-      when: os_release.stdout.find("Ubuntu") == -1 and os_release.stdout.find("Debian") == -1
-
-    - name: Include apt_cache task
-      ansible.builtin.include_tasks: roles/software_management/tasks/apt_cache.yml
-      when: os_release.stdout.find("Ubuntu") != -1 or os_release.stdout.find("Debian") != -1
-
-    - name: Include safe_upgrade task
-      ansible.builtin.include_tasks: roles/software_management/tasks/software_uninstall.yml
-      when: os_release.stdout.find("Ubuntu") != -1 or os_release.stdout.find("Debian") != -1
+  community.general.aptitude:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ software_list }}"
+  tags:
+    - software
+    - install
+    - aptitude
