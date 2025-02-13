@@ -1,10 +1,7 @@
-- name: Uninstall software packages
-  become: yes
-  community.general.aptitude:
+---
+# Install software(s)
+- name: software install
+  apt:
     name: "{{ item }}"
-    state: latest
-  loop: "{{ software_uninstall_list }}"
-  tags:
-    - software
-    - uninstall
-    - aptitude
+    state: present
+  with_items: "{{ software_list }}"

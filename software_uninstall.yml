@@ -1,11 +1,8 @@
 ---
-- name: Safe uninstall software packages
+- name: Software Uninstall Playbook 
+  hosts: all
   become: yes
-  community.general.aptitude:
-    name: "{{ item }}"
-    state: absent
-  loop: "{{ software_uninstall_list }}"
-  tags:
-    - software
-    - uninstall
-    - aptitude
+  vars:
+    software_uninstall: true
+  roles:
+    - role: software_management

@@ -1,8 +1,8 @@
 ---
-- name: Software Install Playbook
+- name: Software Upgrade Playbook
   hosts: all
   become: yes
   vars:
-    software_install: true
+    software_upgrade: true
   roles:
     - role: software_management

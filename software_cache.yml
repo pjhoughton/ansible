@@ -1,8 +1,8 @@
 ---
-- name: Software Install Playbook
+- name: Cache Update Playbook
   hosts: all
   become: yes
   vars:
-    software_install: true
+    software_cache: true
   roles:
     - role: software_management

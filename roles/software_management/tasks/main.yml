@@ -1,12 +1,17 @@
-# roles/safe_upgrade/tasks/main.yml
+---
+# Include individual tasks based on conditions
+- include_tasks: software_cache.yml
+  when: software_cache | default(false)
 
-#- ansible.builtin.include_tasks:
-#    file: apt_cache.yml
-#- ansible.builtin.include_tasks:
-#    file: safe_upgrade.yml
-#- ansible.builtin.include_tasks:
-#    file: software_install.yml
-#- ansible.builtin.include_tasks:
-#    file: aptitude_software_install.yml
-#- ansible.builtin.include_tasks:
-#    file: software_uninstall.yml
+- include_tasks: software_install.yml
+  when: software_install | default(false)
+
+- include_tasks: software_uninstall.yml
+  when: software_uninstall | default(false)
+  
+- include_tasks: software_upgrade.yml
+  when: software_upgrade | default(false)
+  
+- include_tasks: software_dist_upgrade.yml
+  when: software_dist_upgrade | default(false)
+  

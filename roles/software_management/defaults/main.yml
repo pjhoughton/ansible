@@ -4,6 +4,6 @@
 software_list:
   - git
   - aptitude
-  - copilot
+  - cockpit
 
 software_uninstall_list:

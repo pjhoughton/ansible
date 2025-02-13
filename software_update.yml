@@ -1,9 +1,0 @@
----
-- name: Update APT cache using software_management role
-  hosts: all
-  become: yes
-
-  roles:
-    - role: software_management
-      tasks_from: apt_cache.yml
-
