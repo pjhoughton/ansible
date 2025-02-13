@@ -1,7 +1,9 @@
----
-- name: Update APT cache and perform a safe upgrade using software_Management role
+- name: Update APT cache and perform a safe upgrade using software_updates role
   hosts: all
   become: yes
+
+  roles:
+    - role: software_updates
 
   tasks:
     - name: Check if the system is Ubuntu or Debian
@@ -18,5 +20,5 @@
       when: os_release.stdout.find("Ubuntu") != -1 or os_release.stdout.find("Debian") != -1
 
     - name: Include safe_upgrade task
-      ansible.builtin.include_tasks: roles/software_management/tasks/software_install.yml
+      ansible.builtin.include_tasks: roles/software_management/tasks/software_uninstall.yml
       when: os_release.stdout.find("Ubuntu") != -1 or os_release.stdout.find("Debian") != -1
