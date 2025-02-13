@@ -3,7 +3,7 @@
 
 - name: Install software packages
   become: yes
-  ansible.builtin.apt:
+  community.general.aptitude:
     name: "{{ item }}"
     state: latest
   loop: "{{ software_list }}"

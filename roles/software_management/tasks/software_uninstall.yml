@@ -3,7 +3,7 @@
 
 - name: Uninstall software packages
   become: yes
-  ansible.builtin.aptitude:
+  community.general.aptitude:
     name: "{{ item }}"
     state: absent
   loop: "{{ software_uninstall_list }}"
@@ -11,3 +11,5 @@
     - software
     - uninstall
     - aptitude
+
+
