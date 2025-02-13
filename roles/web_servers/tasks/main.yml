@@ -1,41 +1,21 @@
 ---
-# roles/webserver/tasks/main.yml
+# Include individual tasks based on conditions
+- include_tasks: copy_index.yml
+  when: copy_index | default(false)
 
-- name: Install web server
-  ansible.builtin.include_tasks: install.yml
-  tags:
-    - webserver
-    - install
+- include_tasks: copy_website.yml
+  when: copy_website | default(false)
 
-- name: Copy index.html
-  ansible.builtin.include_tasks: copy_index.yml
-  tags:
-    - webserver
-    - copy
-    - index
+- include_tasks: install.yml
+  when: install | default(false)
 
-- name: Copy website
-  ansible.builtin.include_tasks: copy_website.yml
-  tags:
-    - webserver
-    - copy
-    - website
+- include_tasks: tidy_up.yml
+  when: tidy_up | default(false)
+  
+- include_tasks: uninstall.yml
+  when: uninstall | default(false)
 
-- name: Update website
-  ansible.builtin.include_tasks: update_website.yml
-  tags:
-    - webserver
-    - update
-    - website
-
-- name: Uninstall web server
-  ansible.builtin.include_tasks: uninstall.yml
-  tags:
-    - webserver
-    - uninstall
-
-- name: Tidy up
-  ansible.builtin.include_tasks: tidy_up.yml
-  tags:
-    - webserver
-    - tidy_up
+- include_tasks: update_website.yml
+  when: update_website | default(false)
+  
+  

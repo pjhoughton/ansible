@@ -1,20 +1,11 @@
 ---
-# tasks file for key_management
+# Include individual tasks based on conditions
+- include_tasks: backup_keys.yml
+  when: backup_keys | default(false)
 
-- name: Include tasks to create SSH keys
-  ansible.builtin.include_tasks: create_keys.yml
-  tags:
-    - ssh
-    - key_management
+- include_tasks: create_keys.yml
+  when: create_keys | default(false)
 
-- name: Include tasks to backup SSH keys
-  ansible.builtin.include_tasks: backup_keys.yml
-  tags:
-    - ssh
-    - key_management
-
-- name: Include tasks to delete SSH key backups
-  ansible.builtin.include_tasks: delete_backups.yml
-  tags:
-    - ssh
-    - key_management
+- include_tasks: delete_backups.yml
+  when: delete_backups | default(false)
+  

@@ -1,2 +1,15 @@
 ---
-# tasks file for user_management
+# Include individual tasks based on conditions
+- include_tasks: assign_groups.yml
+  when: assign_groups | default(false)
+
+- include_tasks: create_user.yml
+  when: create_user | default(false)
+
+- include_tasks: delete_user.yml
+  when: delete_user | default(false)
+
+- include_tasks: make_sudoer.yml
+  when: make_sudoer | default(false)
+  
+  
