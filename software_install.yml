@@ -3,7 +3,7 @@
   become: yes
   community.general.aptitude:
     name: "{{ item }}"
-    state: latest
+    state: present
   loop: "{{ software_list }}"
   tags:
     - software

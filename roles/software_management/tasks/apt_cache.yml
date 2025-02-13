@@ -2,7 +2,7 @@
 # tasks file for managing apt cache
 
 - name: Ensure update cache is up to date
-  ansible.builtin.apt:
+  community.general.aptitude:
     update_cache: yes
     cache_valid_time: 3600
   when: ansible_distribution in ["Debian", "Ubuntu"]  # Filtering to specific distributions as other distributions don't use apt
@@ -11,7 +11,7 @@
     - update
 
 - name: Ensure autoclean is set
-  ansible.builtin.apt:
+  community.general.aptitude:
     autoclean: yes
   when: ansible_distribution in ["Debian", "Ubuntu"]  # Filtering to specific distributions as other distributions don't use apt
   tags:
@@ -19,9 +19,11 @@
     - autoclean
 
 - name: Ensure autoremove is set
-  ansible.builtin.apt:
+  community.general.aptitude:
     autoremove: yes
   when: ansible_distribution in ["Debian", "Ubuntu"]  # Filtering to specific distributions as other distributions don't use apt
   tags:
     - apt
     - autoremove
+
+

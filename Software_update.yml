@@ -1,9 +1,18 @@
 ---
-- name: Safe upgrade with aptitude
+- name: Update APT cache using software_management role
+  hosts: all
   become: yes
-  community.general.aptitude:
-    upgrade: safe
-  tags:
-    - software
-    - upgrade
-    - aptitude
+
+  roles:
+    - role: software_management
+      tasks_from: apt_cache.yml
+
+  tasks:
+    - name: Check if the system is Ubuntu or Debian
+      ansible.builtin.shell: cat /etc/os-release
+      register: os_release
+
+    - name: Ensure the playbook runs only on Ubuntu or Debian systems
+      ansible.builtin.debug:
+        msg: "This playbook is only for Ubuntu or Debian systems."
+      when: os_release.stdout.find("Ubuntu") == -1 and os_release.stdout.find("Debian") == -1
