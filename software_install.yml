@@ -3,7 +3,7 @@
   become: yes
 
   roles:
-    - role: software_updates
+    - role: software_management
 
   tasks:
     - name: Check if the system is Ubuntu or Debian
