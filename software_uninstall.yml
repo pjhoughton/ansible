@@ -1,4 +1,7 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Uninstalls software on all servers by leveraging the software_management role.
+
 - name: Software Uninstall Playbook 
   hosts: all
   become: yes

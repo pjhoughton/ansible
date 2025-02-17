@@ -1,4 +1,8 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Checks if a reboot is required by looking for the presence of the /var/run/reboot-required file.
+# - Displays a message indicating whether a reboot is necessary or not.
+
 - name: Check Reboot Requirement Playbook
   hosts: all
   become: yes

@@ -1,4 +1,7 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Upgrades software on all servers by leveraging the software_management role.
+
 - name: Software Upgrade Playbook
   hosts: all
   become: yes

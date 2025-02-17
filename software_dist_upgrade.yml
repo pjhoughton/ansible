@@ -1,4 +1,7 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Executes a distribution upgrade on all servers by leveraging the software_management role.
+
 - name: Software Dist Upgrade Playbook
   hosts: all
   become: yes

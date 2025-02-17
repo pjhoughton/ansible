@@ -1,0 +1,11 @@
+---
+# This Ansible playbook performs the following tasks:
+# - Updates Xen Orchestra by running the update script on all servers in the xcp_servers group.
+
+- name: Update Xen Orchestra
+  hosts: xcp_servers
+  become: yes
+
+  tasks:
+    - name: Run Xen Orchestra update script
+      command: /home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update

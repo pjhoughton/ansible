@@ -1,0 +1,31 @@
+---
+# This Ansible playbook updates software and performs group-specific tasks:
+# - Updates apt cache and upgrades all packages for all servers.
+# - Executes Xen Orchestra update script for servers in the xcp_servers group.
+# - Pulls Docker images using Docker Compose v2 for servers in the docker_servers group.
+
+- name: Software Upgrade Playbook
+  hosts: all
+  become: yes
+  vars:
+    software_cache: true
+    software_upgrade: true
+  roles:
+    - role: software_management
+    
+- name: Specific tasks for xcp_servers
+  hosts: xcp_servers
+  become: yes
+  tasks:
+    - name: Run Xen Orchestra update script
+      command: /home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update
+
+- name: Pull Docker images using Docker Compose v2
+  hosts: docker_servers
+  become: yes
+  tasks:
+    - name: Pull images defined in docker-compose.yml
+      community.docker.docker_compose_v2:
+        project_src: /home/paul/docker-compose
+        state: present
+        pull: always

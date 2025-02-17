@@ -1,3 +1,6 @@
+---
+# This Ansible playbook performs the following tasks:
+# - Pulls Docker images defined in the docker-compose.yml file using Docker Compose v2 on all servers in the docker_servers group.
 
 - name: Pull Docker images using Docker Compose v2
   hosts: docker_servers

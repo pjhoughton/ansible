@@ -1,4 +1,11 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Pings Linux and macOS servers using the ping module.
+# - Pings Windows servers using the win_ping module.
+# - Gathers facts from all servers.
+# - Prints gathered facts for Linux and macOS servers.
+# - Prints gathered facts for Windows servers.
+
 - name: Ping and Gather Facts Playbook
   hosts: all
   tasks:
@@ -34,5 +41,3 @@
           Memory: {{ ansible_memtotal_mb }} MB
           CPU Cores: {{ ansible_processor_cores }}
           FQDN: {{ ansible_fqdn }}
-          Ansible Version: {{ ansible_version.full }}
-      when: ansible_system is defined and ansible_system == 'Windows'

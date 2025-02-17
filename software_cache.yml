@@ -1,4 +1,7 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Updates the software cache on all servers by leveraging the software_management role.
+
 - name: Cache Update Playbook
   hosts: all
   become: yes

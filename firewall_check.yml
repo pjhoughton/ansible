@@ -1,4 +1,8 @@
 ---
+# This Ansible playbook performs the following tasks:
+# - Checks the status of the firewall on all servers using the `ufw status` command.
+# - Prints the firewall status, including specific port/service information if the firewall is active.
+
 - name: Check Firewall Status Playbook
   hosts: all
   become: yes
