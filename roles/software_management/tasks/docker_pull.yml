@@ -1,0 +1,11 @@
+# roles/xen_orchestra/tasks/docker_pull.yml
+- name: Pull images defined in docker-compose.yml
+  community.docker.docker_compose_v2:
+    project_src: /home/paul/docker-compose
+    state: present
+    pull: always
+  register: docker_pull_result
+
+- name: Display the result of Docker pull
+  debug:
+    var: docker_pull_result

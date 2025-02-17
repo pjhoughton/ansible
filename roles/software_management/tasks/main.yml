@@ -15,3 +15,10 @@
 - include_tasks: software_dist_upgrade.yml
   when: software_dist_upgrade | default(false)
   
+- include_tasks: xen_update.yml
+  when: xen_update | default(false)
+  
+- include_tasks: docker_pull.yml
+  when: docker_pull | default(false)
+  
+ 

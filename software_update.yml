@@ -13,19 +13,18 @@
   roles:
     - role: software_management
     
-- name: Specific tasks for xcp_servers
+- name: Specific Update tasks for xcp_servers
   hosts: xcp_servers
   become: yes
-  tasks:
-    - name: Run Xen Orchestra update script
-      command: /home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update
+  vars:
+    xen_update: true
+  roles:
+    - role: software_management
 
-- name: Pull Docker images using Docker Compose v2
+- name: Specific Update tasks for docker_servers
   hosts: docker_servers
   become: yes
-  tasks:
-    - name: Pull images defined in docker-compose.yml
-      community.docker.docker_compose_v2:
-        project_src: /home/paul/docker-compose
-        state: present
-        pull: always
+  vars:
+    docker_pull: true
+  roles:
+    - role: software_management
