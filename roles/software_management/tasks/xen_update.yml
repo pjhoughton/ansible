@@ -1,18 +1,5 @@
 # roles/xen_orchestra/tasks/update_xen_orchestra.yml
-- name: Update Xen Orchestra using script 
+- name: Update Xen Orchestra using script
   command: /home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update
   register: update_result
 
-- name: Display update result
-  debug:
-    var: update_result
-
-- name: Check if any updates were applied
-  debug:
-    msg: "Xen Orchestra was updated."
-  when: "'updated' in update_result.stdout"
-
-
-# roles/xen_orchestra/tasks/update_xen_orchestra.yml
-#- name: Update Xen Orchestra using script 
-#  command: /home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update

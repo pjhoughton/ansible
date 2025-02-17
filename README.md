@@ -127,3 +127,57 @@ using variables inside Plays and tasks
 eg.     name: {{variable_name}}
 
 
+Roles
+
+All Roles craeted as seperate yml files, which are lsited in main.yml but set to false so do not run unless flag is set to true 
+
+audit
+base
+cron
+db_servers
+file_servers
+key_management:
+
+	backup_keys
+	create_keys
+	delete_keys
+
+server_deploy:
+
+	disable_ipv6
+	set_timezone
+	swap_file
+
+software_management:
+
+	docker_pull
+	soctware_cache
+	software_dist_upgrade
+	software_install
+	software_uninstall
+	software_upgrade
+	xen_update
+
+user_management:
+
+	assign_groups
+	create_user
+	delete_user
+	make_sudoer
+
+web_servers
+
+	copy_index
+	copy_website
+	install
+	tidy_up
+	uninstall
+	update_website
+
+workstations
+xcp_servers
+
+
+
+
+
