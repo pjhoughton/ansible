@@ -137,42 +137,47 @@ cron
 db_servers
 file_servers
 key_management:
-
+   tasks:
 	backup_keys
 	create_keys
 	delete_keys
 
 server_deploy:
-
+   tasks:
 	disable_ipv6
 	set_timezone
 	swap_file
 
 software_management:
-
-	docker_pull
-	soctware_cache
-	software_dist_upgrade
-	software_install
-	software_uninstall
-	software_upgrade
-	xen_update
+   tasks:
+	docker_pull		runs a docker compose pull to update containers
+	soctware_cache		updates cache, autoclean, autoremove
+	software_dist_upgrade   performs a distribution update
+	software_install        installs on or more software pacakages
+	software_uninstall      uninstalls one or more software packages
+	software_upgrade        upgrades all software 
+	xen_update              update xen orchestrata using XenOrchestraInstallerUpdater script
 
 user_management:
-
+   tasks:
 	assign_groups
 	create_user
 	delete_user
 	make_sudoer
 
 web_servers
-
-	copy_index
-	copy_website
-	install
+   tasks:
+	copy_index		copys index.html to default location
+	copy_website            copys website to a default location 
+	install			install either Nginx or Apache2 
 	tidy_up
-	uninstall
+	uninstall		uninstall either Nginx or Apache2 
 	update_website
+   handlers:
+	start web server
+	stop webserver
+	restart web server
+	reload web server
 
 workstations
 xcp_servers
