@@ -1,0 +1,36 @@
+---
+# Include individual tasks based on conditions
+# Set all to False by default so only run when specifically called  
+- name: copy_file
+  include_tasks: copy_file.yml
+  when: copy_file | default(false)
+
+- name: copy_folder 
+  include_tasks: copy_folder.yml
+  when: move_file | default(false)
+
+- name: move_file
+  include_tasks: move_file.yml
+  when: move_file | default(false)
+
+- name: move_folder
+  include_tasks: move_folder.yml
+  when: move_folder | default(false)
+  
+- name: create_cron_playbook
+  include_tasks: create_cron_playbook.yml
+  when: create_cron_playbook | default(false)
+
+- name: create_cron_script
+  include_tasks: create_cron_script.yml
+  when: create_cron_script | default(false)
+  
+- name: list cron
+  include_tasks: list_cron.yml
+  when: list_cron | default(false)
+  
+- name: make_executable
+  include_tasks: make_executable.yml
+  when: make_executable | default(false)
+  
+

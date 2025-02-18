@@ -1,11 +1,15 @@
 ---
 # Include individual tasks based on conditions
-- include_tasks: disable_ipv6.yml
+# Set all to False by default so only run when specifically called  
+- name: diable ipv6
+  include_tasks: disable_ipv6.yml
   when: disable_ipv6 | default(false)
 
-- include_tasks: set_timezone.yml
+- name: set timezone
+  include_tasks: set_timezone.yml
   when: set_timezone | default(false)
 
-- include_tasks: swap_file.yml
+- name: create swapfile 
+  include_tasks: swap_file.yml
   when: swap_file | default(false)
   

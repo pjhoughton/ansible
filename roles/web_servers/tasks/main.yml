@@ -1,21 +1,28 @@
 ---
 # Include individual tasks based on conditions
-- include_tasks: copy_index.yml
+# Set all to False by default so only run when specifically called  
+- name: copy_index
+  include_tasks: copy_index.yml
   when: copy_index | default(false)
 
-- include_tasks: copy_website.yml
+- name: copy website
+  include_tasks: copy_website.yml
   when: copy_website | default(false)
 
-- include_tasks: install.yml
+- name: install webseer
+  include_tasks: install.yml
   when: install | default(false)
 
-- include_tasks: tidy_up.yml
+- name: tidy up webserver
+  include_tasks: tidy_up.yml
   when: tidy_up | default(false)
   
-- include_tasks: uninstall.yml
+- name: uninstall webserver
+  include_tasks: uninstall.yml
   when: uninstall | default(false)
 
-- include_tasks: update_website.yml
+- name: update website
+  include_tasks: update_website.yml
   when: update_website | default(false)
   
   

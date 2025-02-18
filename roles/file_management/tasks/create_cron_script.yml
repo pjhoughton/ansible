@@ -1,0 +1,11 @@
+# tasks/create_cron_script.yml
+---
+- name: Create cron job for running script
+  cron:
+    name: "{{ cron_script_name }}"
+    minute: "{{ cron_script_minute }}"
+    hour: "{{ cron_script_hour }}"
+    day: "{{ cron_script_day }}"
+    month: "{{ cron_script_month }}"
+    weekday: "{{ cron_script_weekday }}"
+    job: "{{ cron_script_command }}"

@@ -135,6 +135,16 @@ audit
 base
 cron
 db_servers
+file_management:
+   tasks:
+	copy_file
+	copy_folder
+	move_file
+	move_folder
+	create_cron_playbook
+	create_cron_script
+	make_executable
+
 file_servers
 key_management:
    tasks:

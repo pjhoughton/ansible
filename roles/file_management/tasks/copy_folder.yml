@@ -1,0 +1,7 @@
+# tasks/copy_folder.yml
+---
+- name: Copy folder
+  copy:
+    src: "{{ copy_folder_src }}"
+    dest: "{{ copy_folder_dest }}"
+    recursive: yes

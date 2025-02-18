@@ -1,0 +1,6 @@
+# tasks/copy_file.yml
+---
+- name: Copy file
+  copy:
+    src: "{{ copy_file_src }}"
+    dest: "{{ copy_file_dest }}"

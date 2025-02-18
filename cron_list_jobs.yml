@@ -1,0 +1,10 @@
+---
+# This Ansible playbook creates a cron job to run another playbook on a specified schedule.
+
+- name: Schedule Playbook Execution
+  hosts: all
+  become: yes
+  vars:
+    list_cron: true
+  roles:
+    - file_management

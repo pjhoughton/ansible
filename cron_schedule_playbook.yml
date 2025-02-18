@@ -1,0 +1,19 @@
+---
+# This Ansible playbook creates a cron job to run another playbook on a specified schedule.
+
+- name: Schedule Playbook Execution
+  hosts: workstations
+  become: yes
+  vars:
+    create_cron_playbook: true
+    
+    # Variables for creating the cron job for the playbook
+    cron_playbook_name: software_update
+    cron_playbook_minute: "0"
+    cron_playbook_hour: "4"  # Example: run daily at 4 AM
+    cron_playbook_day: "*"
+    cron_playbook_month: "*"
+    cron_playbook_weekday: "*"
+    cron_playbook_command: "ansible-playbook /home/paul/ansible/software_update.yml"
+  roles:
+    - file_management

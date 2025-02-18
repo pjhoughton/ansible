@@ -1,24 +1,30 @@
 ---
 # Include individual tasks based on conditions
-- include_tasks: software_cache.yml
+# Set all to False by default so only run when specifically called  
+- name: Include software_cache tasks
+  include_tasks: software_cache.yml
   when: software_cache | default(false)
 
-- include_tasks: software_install.yml
+- name: Include software_install tasks
+  include_tasks: software_install.yml
   when: software_install | default(false)
 
-- include_tasks: software_uninstall.yml
+- name: Include software_uninstall tasks
+  include_tasks: software_uninstall.yml
   when: software_uninstall | default(false)
   
-- include_tasks: software_upgrade.yml
+- name: Include software_upgrade tasks
+  include_tasks: software_upgrade.yml
   when: software_upgrade | default(false)
   
-- include_tasks: software_dist_upgrade.yml
+- name: Include software_dist_upgrade tasks
+  include_tasks: software_dist_upgrade.yml
   when: software_dist_upgrade | default(false)
   
-- include_tasks: xen_update.yml
+- name: Include xen_update tasks
+  include_tasks: xen_update.yml
   when: xen_update | default(false)
   
-- include_tasks: docker_pull.yml
+- name: Include docker_pull tasks
+  include_tasks: docker_pull.yml
   when: docker_pull | default(false)
-  
- 

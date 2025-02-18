@@ -1,0 +1,4 @@
+# tasks/move_folder.yml
+---
+- name: Move folder
+  command: mv "{{ move_folder_src }}" "{{ move_folder_dest }}"

@@ -1,11 +1,15 @@
 ---
 # Include individual tasks based on conditions
-- include_tasks: backup_keys.yml
+# Set all to False by default so only run when specifically called  
+- name: backup keys
+  include_tasks: backup_keys.yml
   when: backup_keys | default(false)
 
-- include_tasks: create_keys.yml
+- name: create keys
+  include_tasks: create_keys.yml
   when: create_keys | default(false)
 
-- include_tasks: delete_backups.yml
+- name: delete backup
+  include_tasks: delete_backups.yml
   when: delete_backups | default(false)
   

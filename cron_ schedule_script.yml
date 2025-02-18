@@ -1,0 +1,30 @@
+---
+# This Ansible playbook copies a file to a remote destination, makes the file executable,
+# and creates a cron job to run the script on a specified schedule.
+
+- name: Manage File and Cron Job
+  hosts: all
+  become: yes
+  vars:
+    copy_file: true
+    move_file: false
+    make_executable: true
+    create_cron_script: true
+    
+    # Variables for file copy
+    copy_file_src: /local/path/to/source/file
+    copy_file_dest: /remote/path/to/destination/file
+    
+    # Variables for making the file executable
+    file_to_make_executable: /remote/path/to/destination/file
+    
+    # Variables for creating the cron job
+    cron_script_name: my_cron_script
+    cron_script_minute: "0"
+    cron_script_hour: "3"
+    cron_script_day: "*"
+    cron_script_month: "*"
+    cron_script_weekday: "*"
+    cron_script_command: "/remote/path/to/destination/file"
+  roles:
+    - file_management

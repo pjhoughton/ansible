@@ -1,0 +1,25 @@
+---
+- name: Get user's cron jobs
+  command: crontab -l
+  register: cron_output
+  failed_when: false
+  changed_when: false
+
+- name: Display user's cron jobs if present
+  debug:
+    msg: "{{ inventory_hostname }} user cron jobs: {{ cron_output.stdout_lines }}"
+  when: cron_output.rc == 0
+
+- name: Notify if no crontab for user
+  debug:
+    msg: "{{ inventory_hostname }} has no crontab for the user"
+  when: cron_output.rc != 0
+
+- name: Get system-wide cron jobs
+  command: cat /etc/crontab
+  register: system_cron_output
+
+- name: Display system-wide cron jobs if present
+  debug:
+    msg: "{{ inventory_hostname }} system-wide cron jobs: {{ system_cron_output.stdout_lines }}"
+  when: system_cron_output.stdout_lines is defined and system_cron_output.stdout_lines | length > 0

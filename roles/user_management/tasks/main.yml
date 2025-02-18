@@ -1,15 +1,20 @@
 ---
 # Include individual tasks based on conditions
-- include_tasks: assign_groups.yml
+# Set all to False by default so only run when specifically called  
+- name: assign groups
+  include_tasks: assign_groups.yml
   when: assign_groups | default(false)
 
-- include_tasks: create_user.yml
+- name: create user 
+  include_tasks: create_user.yml
   when: create_user | default(false)
 
-- include_tasks: delete_user.yml
+- name: delete user
+  include_tasks: delete_user.yml
   when: delete_user | default(false)
 
-- include_tasks: make_sudoer.yml
+- name: make sudoer
+  include_tasks: make_sudoer.yml
   when: make_sudoer | default(false)
   
   

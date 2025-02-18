@@ -1,0 +1,4 @@
+# tasks/move_file.yml
+---
+- name: Move file
+  command: mv "{{ move_file_src }}" "{{ move_file_dest }}"
