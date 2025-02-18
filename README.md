@@ -29,11 +29,11 @@ How to Install Ansible (Ubuntu)
 On the control node, run the following commands:
 
 sh
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y software-properties-common
-sudo add-apt-repository --yes --update ppa:ansible/ansible
-sudo apt install -y ansible
+	sudo apt update
+	sudo apt upgrade -y
+	sudo apt install -y software-properties-common
+	sudo add-apt-repository --yes --update ppa:ansible/ansible
+	sudo apt install -y ansible
 SSH Keys
 SSH keys are vital for Ansible to work. While you probably already use SSH keys, it's recommended to have a separate key just for Ansible, using the ed25519 standard due to its benefits:
 
@@ -48,53 +48,53 @@ Smaller Keys: Easier to transfer and copy/paste.
 On the control node, create an SSH key pair by running the following command (note the comment and the filename to denote it's for Ansible):
 
 sh
-ssh-keygen -t ed25519 -C "Ansible" -f ~/.ssh/ansible_ed25519
+	ssh-keygen -t ed25519 -C "Ansible" -f ~/.ssh/ansible_ed25519
 Copy the public key to all managed nodes:
 
 sh
-ssh-copy-id -i ~/.ssh/ansible_ed25519 user@host
+	ssh-copy-id -i ~/.ssh/ansible_ed25519 user@host
 GitHub
 It's best practice to have a GitHub (or similar) repository for ease of version control, sharing, and documentation.
 
 GitHub Syntax
-sh
-git pull 
-git status
-git add .
-git commit -m "added roles"
-git push
+sh	
+	git pull 
+	git status
+	git add .
+	git commit -m "added roles"
+	git push
 Ansible Syntax
-sh
-ansible all --key-file ~/.ssh/ansible_ed25519 -i inventory -m ping
-Simplified using ansible.cfg:
+	sh
+	ansible all --key-file ~/.ssh/ansible_ed25519 -i inventory -m ping
+	Simplified using ansible.cfg:
+	
+	sh
+	ansible all -m ping
+	Other Simple Commands
+	sh
+	ansible all --list-hosts
+	ansible all -m gather_facts
+	ansible all -m gather_facts --limit xo.houghton.network
+	Elevating Commands with --become
+	Install aptitude on all servers, asking for sudo password:
 
-sh
-ansible all -m ping
-Other Simple Commands
-sh
-ansible all --list-hosts
-ansible all -m gather_facts
-ansible all -m gather_facts --limit xo.houghton.network
-Elevating Commands with --become
-Install aptitude on all servers, asking for sudo password:
-
-sh
-ansible all -m apt -a name=aptitude --become --ask-become-pass
-Update snapd, asking for sudo password:
-
-sh
-ansible all -m apt -a "name=snapd state=latest" --become --ask-become-pass
-Playbook Commands
-Install packages using a playbook:
-
-sh
-ansible-playbook --ask-become-pass install_aptitude.yml
-Using tags and limit:
-
-sh
-ansible-playbook --tags cockpit --ask-become-pass install_packages.yml
-Variables
-Variables can be used when managing systems of different distributions as package management software may vary.
+	sh
+	ansible all -m apt -a name=aptitude --become --ask-become-pass
+	Update snapd, asking for sudo password:
+	
+	sh
+	ansible all -m apt -a "name=snapd state=latest" --become --ask-become-pass
+	Playbook Commands
+	Install packages using a playbook:
+	
+	sh
+	ansible-playbook --ask-become-pass install_aptitude.yml
+	Using tags and limit:
+	
+	sh
+	ansible-playbook --tags cockpit --ask-become-pass install_packages.yml
+	Variables
+	Variables can be used when managing systems of different distributions as package management software may vary.
 
 Declare variables in inventory files or host variable files:
 
@@ -120,19 +120,19 @@ file_management:
 
 tasks:
 
-copy_file
+	copy_file
+	
+	copy_folder
+	
+	move_file
+	
+	move_folder
+	
+	create_cron_playbook
+	
+	create_cron_script
 
-copy_folder
-
-move_file
-
-move_folder
-
-create_cron_playbook
-
-create_cron_script
-
-make_executable
+	make_executable
 
 file_servers
 
@@ -140,79 +140,79 @@ key_management:
 
 tasks:
 
-backup_keys
-
-create_keys
-
-delete_keys
-
-add_keys
+	backup_keys
+	
+	create_keys
+	
+	delete_keys
+	
+	add_keys
 
 server_deploy:
 
 tasks:
-
-disable_ipv6
-
-set_timezone
-
-swap_file
+	
+	disable_ipv6
+	
+	set_timezone
+	
+	swap_file
 
 software_management:
 
 tasks:
 
-docker_pull: runs a docker-compose pull to update containers
-
-software_cache: updates cache, autoclean, autoremove
-
-software_dist_upgrade: performs a distribution update
-
-software_install: installs one or more software packages
-
-software_uninstall: uninstalls one or more software packages
-
-software_upgrade: upgrades all software
-
-xen_update: updates Xen Orchestrata using XenOrchestraInstallerUpdater script
+	docker_pull: runs a docker-compose pull to update containers
+	
+	software_cache: updates cache, autoclean, autoremove
+	
+	software_dist_upgrade: performs a distribution update
+	
+	software_install: installs one or more software packages
+	
+	software_uninstall: uninstalls one or more software packages
+	
+	software_upgrade: upgrades all software
+	
+	xen_update: updates Xen Orchestrata using XenOrchestraInstallerUpdater script
 
 user_management:
 
 tasks:
 
-assign_groups
-
-create_user
-
-delete_user
-
-make_sudoer
-
-web_servers:
+	assign_groups
+	
+	create_user
+	
+	delete_user
+	
+	make_sudoer
+	
+	web_servers:
 
 tasks:
 
-copy_index: copies index.htmlto default location
+	copy_index: copies index.htmlto default location
+	
+	copy_website: copies website to a default location
+	
+	install: installs either Nginx or Apache2
+	
+	tidy_up
 
-copy_website: copies website to a default location
-
-install: installs either Nginx or Apache2
-
-tidy_up
-
-uninstall: uninstalls either Nginx or Apache2
-
-update_website
+	uninstall: uninstalls either Nginx or Apache2
+	
+	update_website
 
 handlers:
 
-start web server
-
-stop web server
-
-restart web server
-
-reload web server
+	start web server
+	
+	stop web server
+	
+	restart web server
+	
+	reload web server
 
 workstations
 
