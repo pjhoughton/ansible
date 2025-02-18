@@ -4,9 +4,12 @@
 # - Creates multiple users
 # - Makes users sudoers
 # - Copies the SSH keys
+# How to  Run
+#  as it not setup yet, and the user listed in the ansible.cfg hasnt been created yet, youll have to run the following command 
+# Run ansible-playbook -i inventoryfile -u remoteuser bootstrap.yml --become --ask-become-pass
 
 - name: Server Setup Playbook
-  hosts: all
+  hosts: unconfigured
   become: yes
   vars:
     software_upgrade: true

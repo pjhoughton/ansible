@@ -10,3 +10,4 @@ ansible.houghton.network
 xo.houghton.network
 [windows_servers]
 # pjhlaptop.houghton.network
+[unconfigured]
