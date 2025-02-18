@@ -1,38 +1,40 @@
 ---
 # tasks file for base
 
-- name: add ssh key usr_ansible
-  tags: 
-    - always
+- name: Add ssh key for usr_ansible
+  become: yes
+  tags:
+    - initial_setup
   authorized_key:
     user: usr_ansible
     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
-    
-- name: Update and upgrade APT packages 
-  tags: 
-    - always
-  apt: 
-    update_cache: yes 
+
+- name: Update and upgrade APT packages
+  become: yes
+  tags:
+    - initial_setup
+  apt:
+    update_cache: yes
     upgrade: dist
     autoremove: yes
-    autoclean: yes 
-  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-      
+    autoclean: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+
 - name: Install aptitude and cockpit
-  tags: 
-    - ubuntu
+  become: yes
+  tags:
     - aptitude
     - cockpit
   apt:
-    name: 
+    name:
       - aptitude
       - cockpit
     state: latest
-    update_cache: yes # best practice to update cache 
-  when: ansible_distribution in ["Debian", "Ubuntu"] #filtering to specific distributions or verisons as other distributions dont use apt 
-
+    update_cache: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"]
 
 - name: Check available disk space
+  become: yes
   shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
   register: disk_space
 
@@ -44,4 +46,3 @@
           * Available space is only {{ 100 - disk_space.stdout|int }}% *
           *************************************
   when: disk_space.stdout|int > 80
-

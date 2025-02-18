@@ -13,3 +13,7 @@
   include_tasks: delete_backups.yml
   when: delete_backups | default(false)
   
+- name: delete backup
+  include_tasks: add_keys.yml
+  when: add_keys | default(false)
+  

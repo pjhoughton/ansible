@@ -1,0 +1,11 @@
+---
+# This Ansible playbook performs the following tasks, using software_management role:
+# - Updates Xen Orchestra by running the update script on all servers in the xcp_servers group.
+
+- name: Update Xen Orchestra
+  hosts: xcp_servers
+  become: yes
+  vars:
+    xen_update: true
+  roles:
+    - role: software_management

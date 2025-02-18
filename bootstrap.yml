@@ -1,0 +1,34 @@
+---
+# This Ansible playbook uses Roles software_management, user_management, and key_management to set up a server to be managed by Ansible:
+# - Updates apt cache and upgrades all packages
+# - Creates multiple users
+# - Makes users sudoers
+# - Copies the SSH keys
+
+- name: Server Setup Playbook
+  hosts: all
+  become: yes
+  vars:
+    software_upgrade: true
+    create_user: true
+    make_sudoer: true
+    add_keys: true
+    users:
+      - name: 'example_user1'
+        home: '/home/example_user1'
+        groups: 'sudo'
+        sudoer: True
+    ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
+
+  tasks:
+    # Ensure system is up to date
+    - import_tasks: roles/software_management/tasks/software_upgrade.yml
+
+    # Create users
+    - import_tasks: roles/user_management/tasks/create_user.yml
+
+    # Make users sudoers
+    - import_tasks: roles/user_management/tasks/make_sudoer.yml
+
+    # Add keys to users
+    - import_tasks: roles/key_management/tasks/add_keys.yml

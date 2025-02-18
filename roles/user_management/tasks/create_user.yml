@@ -17,9 +17,10 @@
   ansible.builtin.file:
     path: "{{ item.home }}"
     owner: "{{ item.name }}"
-    group: "{{ item.groups | first }}"  # Assuming the first group in the list is the primary group
+    group: "sudo"  # Set primary group to sudo
     mode: '0755'
   loop: "{{ users }}"
+  when: create_user
   tags:
     - user_management
     - set_permissions

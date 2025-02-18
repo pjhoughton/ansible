@@ -1,17 +1,13 @@
 ---
-# tasks file for making the user a sudoer
- - name: Make user a sudoer
-  ansible.builtin.lineinfile:
-    path: "/etc/sudoers.d/{{ item.name }}"
-    line: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
-    state: present
-  validate: 'visudo -cf %s'
-  when: item.sudoer | default(False)
-
-- name: Set permissions on sudoers file
-  ansible.builtin.file:
-    path: "/etc/sudoers.d/{{ item.name }}"
+- name: Make users sudoers by creating files in sudoers.d
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ item.name }}"
+    content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
     owner: root
     group: root
     mode: '0440'
-  when: item.sudoer | default(False)
+  when: item.sudoer and make_sudoer
+  loop: "{{ users }}"
+  tags:
+    - user_management
+    - make_sudoer

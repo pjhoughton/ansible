@@ -1,0 +1,7 @@
+---
+- name: Add SSH key to users
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ ssh_key }}"
+  when: add_keys
+  loop: "{{ users }}"
