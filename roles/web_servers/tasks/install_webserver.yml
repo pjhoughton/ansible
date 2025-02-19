@@ -1,0 +1,9 @@
+---
+# Include install tasks from the software_management role and notify the handler to restart the web server
+- name: Include install tasks from software_management role
+  ansible.builtin.include_role:
+    name: software_management
+    tasks_from: software_install
+  vars:
+    software_list: "{{ webserver_package }}"
+  notify: restart web server

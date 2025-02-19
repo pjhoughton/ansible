@@ -1,0 +1,9 @@
+---
+# Include uninstall tasks from the software_management role and notify the handler to stop the web server
+- name: Include uninstall tasks from software_management role
+  ansible.builtin.include_role:
+    name: software_management
+    tasks_from: software_uninstall
+  vars:
+    software_uninstall_list: "{{ webserver_package }}" # passes variable webserver_package over as software_uninstall_list as software_management/software_uninstall.yml expects
+  notify: stop web server

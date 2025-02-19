@@ -9,17 +9,17 @@
   include_tasks: copy_website.yml
   when: copy_website | default(false)
 
-- name: install webseer
-  include_tasks: install.yml
-  when: install | default(false)
+- name: install webserver
+  include_tasks: install_webserver.yml
+  when: install_webserver | default(false)
 
 - name: tidy up webserver
   include_tasks: tidy_up.yml
   when: tidy_up | default(false)
   
 - name: uninstall webserver
-  include_tasks: uninstall.yml
-  when: uninstall | default(false)
+  include_tasks: uninstall_webserver.yml
+  when: uninstall_webserver | default(false)
 
 - name: update website
   include_tasks: update_website.yml

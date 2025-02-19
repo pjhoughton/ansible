@@ -3,6 +3,10 @@
 webserver_package: nginx
 webserver_service: nginx
 
+webserver_index_src: roles/webserver/files/index.html
+webserver_index_dest: /var/www/html/index.html
+
+
 # If you prefer Apache2, set these variables in your playbook or inventory.
 # webserver_package: apache2
 # webserver_service: apache2

@@ -1,10 +1,12 @@
 ---
-# roles/webserver/tasks/copy_index.yml
-
-- name: Copy index.html
-  ansible.builtin.copy:
-    src: roles/webserver/files/index.html
-    dest: /var/www/html/index.html
+# Include the copy_file task from the file_management role
+- name: Copy index.html using file_management role
+  ansible.builtin.include_role:
+    name: file_management
+    tasks_from: copy_file
+  vars:
+    copy_file_src: "{{ webserver_index_src }}"  # passes webserver_index_src  through as copy_file_src which copy_file task in file_management is expecting
+    copy_file_dest: "{{ webserver_index_dest }}"
   notify:
     - Reload web server
   tags:
