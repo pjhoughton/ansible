@@ -1,0 +1,19 @@
+---
+# Look Up table to determin location of files needed for STH Linux updater:
+file_mapping:
+  Ubuntu:
+    "20.04":
+      - src: "/files/00aptproxy"
+        dest: "/etc/apt/apt.conf.d/00aptproxy"
+      - src: "/files/ubutu2004sources.list"
+        dest: "/etc/apt/sources.list"
+    "22.04":
+      - src: "/files/00aptproxy"
+        dest: "/etc/apt/apt.conf.d/00aptproxy"
+      - src: "/files/ubutu2204sources.list"
+        dest: "/etc/apt/sources.list"
+    "24.04":
+      - src: "/files/00aptproxy"
+        dest: "/etc/apt/apt.conf.d/00aptproxy"
+      - src: "/files/ubutu2404sources.list"
+        dest: "/etc/apt/sources.list.d/ubuntu.sources

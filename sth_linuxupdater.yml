@@ -1,0 +1,16 @@
+---
+# This Ansible playbook copys files accroso to set up linux updater
+# - 
+
+# playbook.yml
+- hosts: all
+  tasks:
+    - name: Load lookup table
+      ansible.builtin.include_vars: sth_linuxupdater_lookup.yml
+
+    - name: Copy specific files based on distro and version
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
+      when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
