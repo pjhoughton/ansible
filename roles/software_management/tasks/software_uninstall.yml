@@ -1,7 +1,22 @@
 ---
-# UNinstall software(s)
-- name: software Uninstall
-  apt:
+# Uninstall software(s) on Debian-based and Red Hat-based distros
+- name: Uninstall software on Debian-based distros
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: absent
   with_items: "{{ software_uninstall_list }}"
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Uninstall software on Red Hat-based distros with yum
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ software_uninstall_list }}"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+
+- name: Uninstall software on Red Hat-based distros with dnf
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ software_uninstall_list }}"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8

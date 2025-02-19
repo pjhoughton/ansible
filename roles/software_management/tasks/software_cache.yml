@@ -1,9 +1,42 @@
 ---
-# Update the cache and clean the package manager
+# Update the cache and clean the package manager 
+# Suitable for Debian-based distros such as Ubuntu and Red Hat-based distros such as CentOS
+# Tested on Ubuntu 24.04
 
-- name: Update apt cache
-  apt:
+- name: Update apt cache and clean package manager on Debian-based distros
+  ansible.builtin.apt:
     update_cache: yes
     cache_valid_time: 3600
     autoclean: yes
     autoremove: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Update yum cache
+  ansible.builtin.yum:
+    update_cache: yes
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+
+- name: Clean yum cache
+  ansible.builtin.command:
+    cmd: yum clean all
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+
+- name: Autoremove unnecessary packages
+  ansible.builtin.command:
+    cmd: yum autoremove
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+
+- name: Update dnf cache
+  ansible.builtin.dnf:
+    update_cache: yes
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
+
+- name: Clean dnf cache
+  ansible.builtin.command:
+    cmd: dnf clean all
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
+
+- name: Autoremove unnecessary packages with dnf
+  ansible.builtin.command:
+    cmd: dnf autoremove
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8

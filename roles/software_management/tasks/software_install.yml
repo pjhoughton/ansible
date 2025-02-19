@@ -1,7 +1,22 @@
 ---
-# Install software(s)
-- name: software install
-  apt:
+# Install software(s) on Debian-based and Red Hat-based distros
+- name: Install software on Debian-based distros
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: present
   with_items: "{{ software_list }}"
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install software on Red Hat-based distros with yum
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ software_list }}"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+
+- name: Install software on Red Hat-based distros with dnf
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ software_list }}"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8

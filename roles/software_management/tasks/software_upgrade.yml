@@ -1,4 +1,20 @@
-- name: Upgrade all installed packages
-  apt:
+---
+# Upgrade all installed packages on Debian-based and Red Hat-based distros
+
+- name: Upgrade all installed packages on Debian-based distros
+  ansible.builtin.apt:
     upgrade: yes
     update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Upgrade all installed packages on Red Hat-based distros
+  ansible.builtin.yum:
+    name: '*'
+    state: latest
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Upgrade all installed packages on Red Hat-based distros with dnf
+  ansible.builtin.dnf:
+    name: '*'
+    state: latest
+  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
