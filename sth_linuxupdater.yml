@@ -1,12 +1,26 @@
 ---
-# This Ansible playbook copys files accroso to set up linux updater
-# - 
-
-# playbook.yml
+# This Ansible playbook copys files accross needed  to set up linux updater
+# - backs up the files if they exsist first 
 - hosts: all
   tasks:
     - name: Load lookup table
       ansible.builtin.include_vars: sth_linuxupdater_lookup.yml
+      
+    - name: Check if the destination file exists
+      ansible.builtin.stat:
+        path: "{{ item.dest }}"
+      register: file_stat
+      with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
+      when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
+
+    - name: Backup the existing file
+      ansible.builtin.command:
+        cmd: mv "{{ item.dest }}" "{{ item.dest }}.bak"
+      when:
+        - item.dest is defined
+        - file_stat.results[ansible_loop.index0].stat.exists
+      with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
+      when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
 
     - name: Copy specific files based on distro and version
       ansible.builtin.copy:
@@ -14,3 +28,6 @@
         dest: "{{ item.dest }}"
       with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
       when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
+
+
+
