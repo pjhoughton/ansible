@@ -1,5 +1,6 @@
 # roles/xen_orchestra/tasks/update_xen_orchestra.yml
 - name: Update Xen Orchestra using script
-  command: /home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update
+  command: "/home/paul/XenOrchestraInstallerUpdater/xo-install.sh --update"
+  
   register: update_result
 
