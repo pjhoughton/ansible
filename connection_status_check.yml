@@ -1,4 +1,3 @@
----
 # This Ansible playbook performs the following tasks:
 # - Pings Linux and macOS servers using the ping module.
 # - Pings Windows servers using the win_ping module.
@@ -25,7 +24,7 @@
         msg: >
           Hostname: {{ ansible_hostname }}
           IP Address: {{ ansible_all_ipv4_addresses | join(', ') }}
-          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_lsb.codename }} {{ ansible_distribution_release }}
           Memory: {{ ansible_memtotal_mb }} MB
           CPU Cores: {{ ansible_processor_cores }}
           FQDN: {{ ansible_fqdn }}
@@ -37,7 +36,8 @@
         msg: >
           Hostname: {{ ansible_hostname }}
           IP Address: {{ ansible_all_ipv4_addresses | join(', ') }}
-          OS: Windows
+          OS: {{ ansible_windows_os_name }}
           Memory: {{ ansible_memtotal_mb }} MB
           CPU Cores: {{ ansible_processor_cores }}
           FQDN: {{ ansible_fqdn }}
+      when: ansible_system is defined and ansible_system == 'Windows'
