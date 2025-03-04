@@ -1,17 +1,15 @@
 ---
-# This Ansible playbook copys files accross needed  to set up linux updater
-# - backs up the files if they exsist first 
 - hosts: all
   tasks:
     - name: Load lookup table
       ansible.builtin.include_vars: sth_linuxupdater_lookup.yml
-      
+
     - name: Check if the destination file exists
       ansible.builtin.stat:
         path: "{{ item.dest }}"
       register: file_stat
-      with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
-      when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
+      with_items: "{{ file_mapping[ansible_os_family][ansible_distribution_major_version] }}"
+      when: file_mapping[ansible_os_family][ansible_distribution_major_version] is defined
 
     - name: Backup the existing file
       ansible.builtin.command:
@@ -19,15 +17,21 @@
       when:
         - item.dest is defined
         - file_stat.results[ansible_loop.index0].stat.exists
-      with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
-      when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
+      with_items: "{{ file_mapping[ansible_os_family][ansible_distribution_major_version] }}"
+      when: file_mapping[ansible_os_family][ansible_distribution_major_version] is defined
 
     - name: Copy specific files based on distro and version
       ansible.builtin.copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-      with_items: "{{ file_mapping['Ubuntu'][ansible_distribution_version] }}"
-      when: file_mapping['Ubuntu'][ansible_distribution_version] is defined
+      with_items: "{{ file_mapping[ansible_os_family][ansible_distribution_major_version] }}"
+      when: file_mapping[ansible_os_family][ansible_distribution_major_version] is defined
 
-
-
+    - name: Set ownership and permissions for copied files
+      ansible.builtin.file:
+        path: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: '0644'
+      with_items: "{{ file_mapping[ansible_os_family][ansible_distribution_major_version] }}"
+      when: file_mapping[ansible_os_family][ansible_distribution_major_version] is defined

@@ -1,5 +1,3 @@
----
-# Look Up table to determin location of files needed for STH Linux updater:
 file_mapping:
   Ubuntu:
     "20.04":
@@ -16,4 +14,26 @@ file_mapping:
       - src: "/files/00aptproxy"
         dest: "/etc/apt/apt.conf.d/00aptproxy"
       - src: "/files/ubutu2404sources.list"
-        dest: "/etc/apt/sources.list.d/ubuntu.sources
+        dest: "/etc/apt/sources.list.d/ubuntu.sources"
+  RedHat:
+    "7":
+      - src: "/files/redhat7config"
+        dest: "/etc/yum.repos.d/redhat7config.repo"
+      - src: "/files/redhat7sources"
+        dest: "/etc/yum.repos.d/sources.repo"
+    "8":
+      - src: "/files/redhat8config"
+        dest: "/etc/yum.repos.d/redhat8config.repo"
+      - src: "/files/redhat8sources"
+        dest: "/etc/yum.repos.d/sources.repo"
+  CentOS:
+    "7":
+      - src: "/files/centos7config"
+        dest: "/etc/yum.repos.d/centos7config.repo"
+      - src: "/files/centos7sources"
+        dest: "/etc/yum.repos.d/sources.repo"
+    "8":
+      - src: "/files/centos8config"
+        dest: "/etc/yum.repos.d/centos8config.repo"
+      - src: "/files/centos8sources"
+        dest: "/etc/yum.repos.d/sources.repo"
