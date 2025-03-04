@@ -1,38 +1,97 @@
-Role Name
-=========
+# Ansible Role: file_management
 
-A brief description of the role goes here.
+## Description
+The `file_management` Ansible role provides tasks for managing files and folders, as well as scheduling playbooks and scripts as cron jobs. The tasks include:
 
-Requirements
-------------
+- `copy_file`: Copy a file from source to destination
+- `copy_folder`: Copy a folder from source to destination
+- `create_cron_playbook`: Add a playbook as a cron job
+- `create_cron_script`: Add a script as a cron job
+- `list_cron`: List existing cron jobs
+- `make_executable`: Make a script executable
+- `move_file`: Move a file from source to destination
+- `move_folder`: Move a folder from source to destination
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Each task is disabled by default and can be enabled by setting the respective variable to `true`.
 
-Role Variables
---------------
+## Requirements
+- Ansible 2.9+ 
+- Compatible with all major Linux distributions
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+## Role Variables
 
-Dependencies
-------------
+### Task Configuration
+- `copy_file`: Copy a file (default: `false`)
+- `copy_folder`: Copy a folder (default: `false`)
+- `create_cron_playbook`: Add a playbook as a cron job (default: `false`)
+- `create_cron_script`: Add a script as a cron job (default: `false`)
+- `list_cron`: List existing cron jobs (default: `false`)
+- `make_executable`: Make a script executable (default: `false`)
+- `move_file`: Move a file (default: `false`)
+- `move_folder`: Move a folder (default: `false`)
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### Path Configuration
+- `copy_file_src`: Source path for copying file
+- `copy_file_dest`: Destination path for copying file
+- `copy_folder_src`: Source path for copying folder
+- `copy_folder_dest`: Destination path for copying folder
+- `move_file_src`: Source path for moving file
+- `move_file_dest`: Destination path for moving file
+- `move_folder_src`: Source path for moving folder
+- `move_folder_dest`: Destination path for moving folder
 
-Example Playbook
-----------------
+### Cron Configuration
+- `cron_playbook_name`: Name of the playbook to be added as cron job
+- `cron_playbook_minute`: Minute at which the playbook should run (default: "0")
+- `cron_playbook_hour`: Hour at which the playbook should run (default: "2")
+- `cron_playbook_day`: Day at which the playbook should run (default: "*")
+- `cron_playbook_month`: Month at which the playbook should run (default: "*")
+- `cron_playbook_weekday`: Weekday at which the playbook should run (default: "*")
+- `cron_playbook_command`: Command to run the playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+- `cron_script_name`: Name of the script to be added as cron job
+- `cron_script_minute`: Minute at which the script should run (default: "0")
+- `cron_script_hour`: Hour at which the script should run (default: "3")
+- `cron_script_day`: Day at which the script should run (default: "*")
+- `cron_script_month`: Month at which the script should run (default: "*")
+- `cron_script_weekday`: Weekday at which the script should run (default: "*")
+- `cron_script_command`: Command to run the script
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+- `file_to_make_executable`: Path to the script to be made executable
 
-License
--------
+```yaml
+copy_file: false
+copy_folder: false
+create_cron_playbook: false
+create_cron_script: false
+list_cron: false
+make_executable: false
+move_file: false
+move_folder: false
 
-BSD
+copy_file_src: /path/to/source/file
+copy_file_dest: /path/to/destination/file
+copy_folder_src: /path/to/source/folder
+copy_folder_dest: /path/to/destination/folder
+move_file_src: /path/to/source/file
+move_file_dest: /path/to/destination/file
+move_folder_src: /path/to/source/folder
+move_folder_dest: /path/to/destination/folder
 
-Author Information
-------------------
+cron_playbook_name: playbook_name
+cron_playbook_minute: "0"
+cron_playbook_hour: "2"
+cron_playbook_day: "*"
+cron_playbook_month: "*"
+cron_playbook_weekday: "*"
+cron_playbook_command: "ansible-playbook /path/to/playbook.yml"
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+cron_script_name: script_name
+cron_script_minute: "0"
+cron_script_hour: "3"
+cron_script_day: "*"
+cron_script_month: "*"
+cron_script_weekday: "*"
+cron_script_command: "/path/to/script.sh"
+
+file_to_make_executable: /path/to/script.sh
