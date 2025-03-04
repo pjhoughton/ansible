@@ -15,6 +15,24 @@ Each task is disabled by default; set them to `true` to activate.
 - Ansible 2.9+ 
 - Compatible with all major Linux distributions
 
+## Exmaple
+
+- hosts: servers
+  roles:
+    - role: software_management
+      vars:
+        software_cache: true
+        software_dist_upgrade: true
+        software_upgrade: true
+        docker_pull: true
+        xen_update: true
+        software_list:
+          - package1
+          - package2
+        software_uninstall_list:
+          - package3
+          - package4
+
 ## Role Variables
 
 ### Task Configuration
@@ -37,25 +55,5 @@ xen_update: false
 
 software_list: []
 software_uninstall_list: []
-
-##  Example playbook
-
-- hosts: servers
-  roles:
-    - role: software_management
-      vars:
-        software_cache: true
-        software_dist_upgrade: true
-        software_upgrade: true
-        docker_pull: true
-        xen_update: true
-        software_list:
-          - package1
-          - package2
-        software_uninstall_list:
-          - package3
-          - package4
-
-
 
 
