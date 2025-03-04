@@ -1,41 +1,61 @@
-Role Name
-=========
+# Ansible Role: software_management
 
-A brief description of the role goes here.
+## Description
+The `software_management` Ansible role handles software and container updates efficiently. It includes tasks for:
+
+- Updating the software cache
+- Performing distribution upgrades
+- Upgrading software packages
+- Pulling new Docker container versions
+- Updating Xen with `xenorchestraupdaterinstaller` script
+
+Each task is disabled by default; set them to `true` to activate.
+
+## Requirements
+- Ansible 2.9+ 
+- Compatible with all major Linux distributions
+
+## Role Variables
+
+### Task Configuration
+- `software_cache`: Update software cache (default: `false`)
+- `software_dist_upgrade`: Perform a distribution upgrade (default: `false`)
+- `software_upgrade`: Upgrade software packages (default: `false`)
+- `docker_pull`: Pull new Docker container versions (default: `false`)
+- `xen_update`: Update Xen with `xenorchestraupdaterinstaller` script (default: `false`)
+
+### Software Lists
+- `software_list`: Array of software packages to install
+- `software_uninstall_list`: Array of software packages to uninstall
+
+```yaml
+software_cache: false
+software_dist_upgrade: false
+software_upgrade: false
+docker_pull: false
+xen_update: false
+
+software_list: []
+software_uninstall_list: []
+
+##  Example playbook
+
+- hosts: servers
+  roles:
+    - role: software_management
+      vars:
+        software_cache: true
+        software_dist_upgrade: true
+        software_upgrade: true
+        docker_pull: true
+        xen_update: true
+        software_list:
+          - package1
+          - package2
+        software_uninstall_list:
+          - package3
+          - package4
 
 
 
 
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
-
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
