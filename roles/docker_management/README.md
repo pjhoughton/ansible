@@ -1,38 +1,22 @@
-Role Name
-=========
+# Ansible Role: docker_management
 
-A brief description of the role goes here.
+## Description
+The `docker_management` Ansible role handles software and container updates efficiently. It includes tasks for:
 
-Requirements
-------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Pulling new Docker container versions
 
-Role Variables
---------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Each task is disabled by default; set them to `true` to activate.
 
-Dependencies
-------------
+## Requirements
+- Ansible 2.9+ 
+- Compatible with all major Linux distributions
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Role Variables
 
-Example Playbook
-----------------
+### Task Configuration
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+- `docker_pull`: Pull new Docker container versions (default: `false`)
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
 
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
