@@ -1,22 +1,31 @@
----
-# This Ansible playbook performs the following tasks:
-# - Checks if a reboot is required by looking for the presence of the /var/run/reboot-required file.
-# - Displays a message indicating whether a reboot is necessary or not.
-
-- name: Check Reboot Requirement Playbook
+- name: Perform System Reboot if Necessary
   hosts: all
   become: yes
   tasks:
     - name: Check if reboot is required
-      stat:
+      ansible.builtin.stat:
         path: /var/run/reboot-required
       register: reboot_required_file
+      when: ansible_facts['os_family'] == "Debian"
 
-    - name: Show reboot result
-      debug:
-        msg: >
-          {% if reboot_required_file.stat.exists %}
-            A reboot is required.
-          {% else %}
-            No reboot is necessary.
-          {% endif %}
+    - name: Check if reboot is required with yum/dnf
+      ansible.builtin.command:
+        cmd: needs-restarting
+      register: yum_dnf_reboot_check
+      failed_when: yum_dnf_reboot_check.rc not in [0, 1]
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Set reboot required fact on Debian-based distros
+      ansible.builtin.set_fact:
+        reboot_required: "{{ reboot_required_file.stat.exists }}"
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Set reboot required fact on Red Hat-based distros
+      ansible.builtin.set_fact:
+        reboot_required: "{{ yum_dnf_reboot_check.rc == 1 }}"
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Reboot the system if required
+      ansible.builtin.reboot:
+        reboot_timeout: 300
+      when: reboot_required | default(false)
