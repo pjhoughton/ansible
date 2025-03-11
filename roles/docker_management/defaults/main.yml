@@ -1,2 +1,4 @@
 ---
 # defaults file for docker_management
+docker_src: "/home/paul/docker-compose"  # Default path to the Docker Compose file
+

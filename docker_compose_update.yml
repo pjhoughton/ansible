@@ -1,0 +1,12 @@
+---
+# This Ansible playbook updates software and performs group-specific tasks:
+#
+# - Pulls Docker images using Docker Compose v2 for servers in the docker_servers group.
+
+- name: Pull Docker images using Docker Compose v2
+  hosts: docker_servers
+  become: yes
+  vars:
+    check_update_docker_compose: true
+  roles:
+    - role: docker_management

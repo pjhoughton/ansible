@@ -4,3 +4,9 @@
 - name: Include docker_pull tasks
   include_tasks: docker_pull.yml
   when: docker_pull | default(false)
+  
+- name: Include Check update docker compose
+  include_tasks: check_update_docker_compose.yml
+  when: check_update_docker_compose | default(false)
+  
+  

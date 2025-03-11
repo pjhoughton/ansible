@@ -1,2 +1,5 @@
 ---
-# defaults file for xcp_servers
+# defaults file for xo_management
+
+update_script_path: "/home/paul/XenOrchestraInstallerUpdater/xo-install.sh"  # Default path to the update script
+

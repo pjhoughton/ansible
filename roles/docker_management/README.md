@@ -15,8 +15,12 @@ Each task is disabled by default; set them to `true` to activate.
 
 ## Role Variables
 
+docker_src: "/home/paul/docker-compose" 
+
 ### Task Configuration
 
 - `docker_pull`: Pull new Docker container versions (default: `false`)
+- `check_update_docker_compose`: update docker compose if theres a new version  (default: `false`)
+
 
 

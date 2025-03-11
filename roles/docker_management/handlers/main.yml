@@ -1,7 +1,7 @@
----
-- name: restart_docker_services
+# Restart Docker services if images were pulled
+- name: Restart Docker services
   community.docker.docker_compose_v2:
-    project_src: /home/paul/docker-compose
+    project_src: "{{ docker_src }}"
     state: present
-    recreate: always  # Recreate containers to use the latest images
-
+    recreate: always  # Recreate containers to use the latest pulled images
+  listen: Restart Docker services

@@ -1,0 +1,29 @@
+- name: Check the current version of Docker Compose
+  command: docker-compose --version
+  register: current_version
+
+- name: Extract current Docker Compose version
+  set_fact:
+    current_docker_compose_version: "{{ current_version.stdout.split(' ')[2] }}"
+
+- name: Fetch the latest version of Docker Compose
+  uri:
+    url: https://api.github.com/repos/docker/compose/releases/latest
+    return_content: yes
+  register: latest_version_info
+
+- name: Set latest Docker Compose version
+  set_fact:
+    latest_version: "{{ latest_version_info.json.tag_name }}"
+
+- name: Compare Docker Compose versions
+  debug:
+    msg: "Current version: {{ current_docker_compose_version }}, Latest version: {{ latest_version }}"
+  when: current_docker_compose_version != latest_version
+
+- name: Update Docker Compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ latest_version }}/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+  when: current_docker_compose_version != latest_version

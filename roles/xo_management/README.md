@@ -13,6 +13,9 @@ Each task is disabled by default; set them to `true` to activate.
 
 ## Role Variables
 
+update_script_path: "/home/paul/XenOrchestraInstallerUpdater/xo-install.sh"  # Default path to the update script
+
+
 ### Task Configuration
 
 - `xen_update`: Update Xen with `xenorchestraupdaterinstaller` script (default: `false`)

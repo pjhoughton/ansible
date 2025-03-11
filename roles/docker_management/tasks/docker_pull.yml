@@ -1,9 +1,9 @@
-# roles/xen_orchestra/tasks/docker_pull.yml
+# roles/docker_management/tasks/docker_pull.yml
 
 # Pull Docker images as defined in docker-compose.yml
 - name: Pull Docker images as defined in docker-compose.yml
   community.docker.docker_compose_v2:
-    project_src: /home/paul/docker-compose
+    project_src: "{{ docker_src }}"
     state: present
     pull: always
   register: docker_pull_result
@@ -20,10 +20,9 @@
     msg: "Docker pull failed. Please check the logs for details."
   when: docker_pull_result.failed
 
-# Restart Docker services if images were pulled
-- name: Restart Docker services if images were pulled
-  community.docker.docker_compose_v2:
-    project_src: /home/paul/docker-compose
-    state: present
-    recreate: always  # Recreate containers to use the latest pulled images
-  when: docker_pull_result.changed  # Only restart services if images were pulled
+# restart if anything was updated 
+
+- name: Notify handler to restart Docker services if images were pulled
+  meta: clear_host_errors
+  when: docker_pull_result.changed
+  notify: Restart Docker services
