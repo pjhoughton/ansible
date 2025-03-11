@@ -1,4 +1,14 @@
 ---
 # defaults file for docker_management
 docker_src: "/home/paul/docker-compose"  # Default path to the Docker Compose file
+docker_prerequisites:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
 
+docker_software:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
