@@ -1,2 +1,7 @@
----
-# handlers file for software_updates
+
+# Handlers for software_management role
+
+- name: Reboot the system if required
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+

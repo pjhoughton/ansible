@@ -1,13 +1,14 @@
 ---
-# Perform dist-upgrade and check if reboot is required, then reboot if necessary
-# Suitable for Debian-based distros such as Ubuntu and Red Hat-based distros such as CentOS
+# Main tasks for software_management role
 
+# Perform dist-upgrade on Debian-based distros
 - name: Perform dist-upgrade on Debian-based distros
   ansible.builtin.apt:
     upgrade: dist
     update_cache: yes
   when: ansible_facts['os_family'] == "Debian"
 
+# Perform upgrade on Red Hat-based distros
 - name: Perform upgrade on Red Hat-based distros with yum
   ansible.builtin.yum:
     name: '*'
@@ -45,7 +46,9 @@
     reboot_required: "{{ yum_dnf_reboot_check.rc == 1 }}"
   when: ansible_facts['os_family'] == "RedHat"
 
-# Reboot if necessary
-- name: Reboot if necessary
-  ansible.builtin.reboot:
+# Notify handler to reboot if necessary
+- name: Notify reboot handler if necessary
+  ansible.builtin.debug:
+    msg: "Reboot required, notifying the handler."
+  notify: Reboot the system if required
   when: reboot_required

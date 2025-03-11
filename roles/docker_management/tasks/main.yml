@@ -9,7 +9,7 @@
   include_tasks: check_update_docker_compose.yml
   when: check_update_docker_compose | default(false)
   
-  - name: Include Check update docker compose
+- name: Include Check update docker compose
   include_tasks: docker_install.yml
   when: docker_install | default(false)
   
