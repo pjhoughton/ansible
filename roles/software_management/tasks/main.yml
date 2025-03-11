@@ -5,12 +5,10 @@
   include_tasks: software_cache.yml
   when: software_cache | default(false)
  
-
 - name: Include software_install tasks
   include_tasks: software_install.yml
   when: software_install | default(false)
  
-
 - name: Include software_uninstall tasks
   include_tasks: software_uninstall.yml
   when: software_uninstall | default(false)
@@ -22,15 +20,4 @@
 - name: Include software_dist_upgrade tasks
   include_tasks: software_dist_upgrade.yml
   when: software_dist_upgrade | default(false)
-
-  
-- name: Include docker_pull tasks
-  include_tasks: docker_pull.yml
-  when: docker_pull | default(false)
  
-  
-- name: Include xen_update tasks
-  include_tasks: xen_update.yml
-  when: xen_update | default(false)
- 
-  

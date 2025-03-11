@@ -19,7 +19,7 @@
   vars:
     xen_update: true
   roles:
-    - role: software_management
+    - role: xo_management
 
 - name: Specific Update tasks for docker_servers
   hosts: docker_servers
@@ -27,4 +27,4 @@
   vars:
     docker_pull: true
   roles:
-    - role: software_management
+    - role: docker_management

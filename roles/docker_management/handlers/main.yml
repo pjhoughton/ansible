@@ -1,0 +1,7 @@
+---
+- name: restart_docker_services
+  community.docker.docker_compose_v2:
+    project_src: /home/paul/docker-compose
+    state: present
+    recreate: always  # Recreate containers to use the latest images
+

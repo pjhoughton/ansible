@@ -1,0 +1,9 @@
+---
+# tasks file for xo_management
+
+- name: Include xen_update tasks
+  include_tasks: xen_update.yml
+  when: xen_update | default(false)
+ 
+  
+

@@ -1,0 +1,6 @@
+---
+# Include individual tasks based on conditions
+# Set all to False by default so only run when specifically called  
+- name: Include docker_pull tasks
+  include_tasks: docker_pull.yml
+  when: docker_pull | default(false)

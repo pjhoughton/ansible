@@ -8,4 +8,4 @@
   vars:
     xen_update: true
   roles:
-    - role: software_management
+    - role: xo_management
