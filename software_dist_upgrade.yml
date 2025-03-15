@@ -9,3 +9,13 @@
     software_dist_upgrade: true
   roles:
     - role: software_management
+
+- name: Update Docker Containers
+  hosts: docker_servers
+  become: yes
+  vars:
+    check_update_docker_compose: true
+  roles:
+    - role: docker_management
+
+
