@@ -1,0 +1,58 @@
+
+- name: Gather facts including Disk info
+  hosts: all
+  gather_facts: yes
+  vars:
+    usage_threshold: 90  # Define the threshold as a variable
+    facts_location: "/home/paul/ansible/tmp/"  # Include trailing slash for consistency
+  tasks:
+    - name: Save specific facts to a file
+      ansible.builtin.copy:
+        content: >
+          {{ {
+              "hostname": ansible_facts['hostname'],
+              "fqdn": ansible_facts['fqdn'],
+              "distribution": ansible_facts['distribution'],
+              "distribution_version": ansible_facts['distribution_version'],
+              "default_ipv4": ansible_facts['default_ipv4']['address'],
+              "memtotal_mb": ansible_facts['memtotal_mb'],
+              "processor": ansible_facts['processor'],
+              "mounts": ansible_facts['mounts']
+          } | to_nice_json }}
+        dest: "{{ facts_location }}{{ inventory_hostname }}_selected_facts.json"
+
+    - name: Save all facts to a file
+      ansible.builtin.copy:
+        content: "{{ ansible_facts | to_nice_json }}"
+        dest: "{{ facts_location }}{{ inventory_hostname }}_all_facts.json"
+
+    - name: Retrieve all partition information
+      ansible.builtin.shell: df -h --output=source,size,used,avail,pcent,target
+      register: partition_info
+
+    - name: Parse and display all partition details
+      ansible.builtin.debug:
+        msg: |
+          Host: {{ inventory_hostname }}
+          Partition Info:
+          {{ partition_info.stdout }}
+
+    - name: Check for high usage and issue warnings
+      ansible.builtin.shell: >
+        df -h --output=source,pcent,target |
+        awk -v threshold={{ usage_threshold }} '$2+0 > threshold {print "Warning: Partition "$1" mounted on "$3" exceeds " threshold "% usage with "$2" used!"}'
+      register: warning_info
+
+    - name: Display warnings for high usage partitions
+      ansible.builtin.debug:
+        msg: |
+          Host: {{ inventory_hostname }}
+          Warnings:
+          {{ warning_info.stdout }}
+      when: warning_info.stdout != ""
+
+    - name: Save warnings to a log file
+      ansible.builtin.copy:
+        content: "{{ warning_info.stdout }}"
+        dest: "{{ facts_location }}warnings.log"
+      when: warning_info.stdout != ""
