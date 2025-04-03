@@ -1,3 +1,4 @@
+# Override ignore rules for important files
 !inventory
 !ansible.cfg
 !README.md
@@ -7,7 +8,16 @@
 !*.yaml
 !demo_ansible_vault.pass
 
-env
+# Ignore temporary and environment files
 ansible_vault.pass
+*.swp
+*.tmp
+*.bak
 
-tmp
+# Ignore temporary directories and logs
+tmp/
+retries/
+*.log
+
+# Exclude a specific subdirectory in retries/
+!retries/important_subdir/
