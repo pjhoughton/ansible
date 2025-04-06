@@ -6,18 +6,28 @@
 !*.md
 !*.yml
 !*.yaml
+!*.MD
 !demo_ansible_vault.pass
+!.gitignore
+!.gitkeep
+
 
 # Ignore temporary and environment files
 ansible_vault.pass
 *.swp
 *.tmp
 *.bak
+*.log
+.DS_Store
+Thumbs.db
 
-# Ignore temporary directories and logs
+
+
+# Ignore directories 
+
+
+#Ignore and logs
 tmp/
 retries/
 *.log
 
-# Exclude a specific subdirectory in retries/
-!retries/important_subdir/

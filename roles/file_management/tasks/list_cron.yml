@@ -1,25 +1,146 @@
 ---
+# Retrieve and display cron jobs, export logs, and enhance output
+
+# Get user's cron jobs
 - name: Get user's cron jobs
   command: crontab -l
   register: cron_output
   failed_when: false
   changed_when: false
+  tags:
+    - user-cron
 
+# Display user's cron jobs if present
 - name: Display user's cron jobs if present
   debug:
-    msg: "{{ inventory_hostname }} user cron jobs: {{ cron_output.stdout_lines }}"
-  when: cron_output.rc == 0
+    msg: |
+      User-specific cron jobs for {{ inventory_hostname }}:
+      =====================================================
+      {{ cron_output.stdout_lines | join('\n') }}
+  when: cron_output.rc == 0 and cron_output.stdout_lines is defined and cron_output.stdout_lines | length > 0
+  tags:
+    - user-cron
 
+# Notify if no user-specific crontab exists
 - name: Notify if no crontab for user
   debug:
-    msg: "{{ inventory_hostname }} has no crontab for the user"
+    msg: "{{ inventory_hostname }} has no user-specific crontab."
   when: cron_output.rc != 0
+  tags:
+    - user-cron
 
+# Save user's cron jobs to a file if present
+- name: Save user's cron jobs to a file
+  copy:
+    content: |
+      User-specific cron jobs for {{ inventory_hostname }}:
+      =====================================================
+      {{ cron_output.stdout_lines | join('\n') }}
+    dest: "/tmp/{{ inventory_hostname }}_user_cron_jobs.log"
+  when: cron_output.rc == 0 and cron_output.stdout_lines is defined and cron_output.stdout_lines | length > 0
+  tags:
+    - user-cron
+
+# Fetch user's cron jobs log for centralized storage
+- name: Fetch user's cron jobs log
+  fetch:
+    src: "/tmp/{{ inventory_hostname }}_user_cron_jobs.log"
+    dest: "./logs/{{ inventory_hostname }}/"
+    flat: yes
+  when: cron_output.rc == 0 and cron_output.stdout_lines is defined and cron_output.stdout_lines | length > 0
+  tags:
+    - user-cron
+
+# Get system-wide cron jobs
 - name: Get system-wide cron jobs
   command: cat /etc/crontab
   register: system_cron_output
+  failed_when: false
+  changed_when: false
+  tags:
+    - system-cron
 
+# Display system-wide cron jobs if present
 - name: Display system-wide cron jobs if present
   debug:
-    msg: "{{ inventory_hostname }} system-wide cron jobs: {{ system_cron_output.stdout_lines }}"
+    msg: |
+      System-wide cron jobs for {{ inventory_hostname }}:
+      =====================================================
+      {{ system_cron_output.stdout_lines | join('\n') }}
   when: system_cron_output.stdout_lines is defined and system_cron_output.stdout_lines | length > 0
+  tags:
+    - system-cron
+
+# Notify if no system-wide crontab exists or is empty
+- name: Notify if no system-wide crontab exists or is empty
+  debug:
+    msg: "{{ inventory_hostname }} has no system-wide cron jobs or the file is empty."
+  when: system_cron_output.stdout_lines is not defined or system_cron_output.stdout_lines | length == 0
+  tags:
+    - system-cron
+
+# Save system-wide cron jobs to a file if present
+- name: Save system-wide cron jobs to a file
+  copy:
+    content: |
+      System-wide cron jobs for {{ inventory_hostname }}:
+      =====================================================
+      {{ system_cron_output.stdout_lines | join('\n') }}
+    dest: "/tmp/{{ inventory_hostname }}_system_cron_jobs.log"
+  when: system_cron_output.stdout_lines is defined and system_cron_output.stdout_lines | length > 0
+  tags:
+    - system-cron
+
+# Fetch system-wide cron jobs log for centralized storage
+- name: Fetch system-wide cron jobs log
+  fetch:
+    src: "/tmp/{{ inventory_hostname }}_system_cron_jobs.log"
+    dest: "./logs/{{ inventory_hostname }}/"
+    flat: yes
+  when: system_cron_output.stdout_lines is defined and system_cron_output.stdout_lines | length > 0
+  tags:
+    - system-cron
+
+# Filter daily cron jobs from system-wide crontab
+- name: Display daily cron jobs from system-wide crontab
+  debug:
+    msg: |
+      Daily cron jobs for {{ inventory_hostname }}:
+      =====================================================
+      {{ system_cron_output.stdout_lines | select('search', 'daily') | join('\n') }}
+  when: system_cron_output.stdout_lines is defined and
+        system_cron_output.stdout_lines | select('search', 'daily') | list | length > 0
+  tags:
+    - system-cron
+
+# Save filtered daily cron jobs to a file
+- name: Save filtered daily cron jobs to a file
+  copy:
+    content: |
+      Daily cron jobs for {{ inventory_hostname }}:
+      =====================================================
+      {{ system_cron_output.stdout_lines | select('search', 'daily') | join('\n') }}
+    dest: "/tmp/{{ inventory_hostname }}_daily_cron_jobs.log"
+  when: system_cron_output.stdout_lines is defined and
+        system_cron_output.stdout_lines | select('search', 'daily') | list | length > 0
+  tags:
+    - system-cron
+
+# Fetch daily cron jobs log for centralized storage
+- name: Fetch daily cron jobs log
+  fetch:
+    src: "/tmp/{{ inventory_hostname }}_daily_cron_jobs.log"
+    dest: "./logs/{{ inventory_hostname }}/"
+    flat: yes
+  when: system_cron_output.stdout_lines | select('search', 'daily') | list | length > 0
+  tags:
+    - system-cron
+
+# Summarize findings for each host
+- name: Summarize findings for each host
+  debug:
+    msg: |
+      Summary for {{ inventory_hostname }}:
+      - User-specific crontab: {{ 'Available' if cron_output.rc == 0 else 'Not available' }}
+      - System-wide crontab: {{ 'Available' if system_cron_output.stdout_lines | length > 0 else 'Not available' }}
+      - Daily jobs extracted: {{ system_cron_output.stdout_lines | select('search', 'daily') | list | length }}
