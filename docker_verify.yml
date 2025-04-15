@@ -3,10 +3,10 @@
 #
 # This playbook pulls updated Docker images and restarts containers only if needed.
 
-- name: Pull Docker images and restart containers if updated
+- name: Verify versions of Docker environment
   hosts: docker_servers
   become: yes
   vars:
-    pull_containers_and_restart: true
+    verify_versions: true
   roles:
     - role: docker_management

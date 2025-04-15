@@ -15,18 +15,10 @@
   hosts: docker_servers
   become: yes
   vars:
-    install_docker_compose: true
     update_docker: true
     update_docker_compose: true
-    install_docker_plugin: true
+    update_docker_plugin: true
     pull_containers_and_restart: true
 
   roles:
     - role: docker_management
-      tasks_from: update_docker.yml
-    - role: docker_management
-      tasks_from: update_docker_compose.yml
-    - role: docker_management
-      tasks_from: install_docker_plugin.yml
-    - role: docker_management
-      tasks_from: pull_containers_and_restart.yml

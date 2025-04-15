@@ -1,12 +1,45 @@
-- name: Download latest Docker Compose binary only if needed
+---
+- name: Get current Docker Compose version
+  ansible.builtin.command:
+    cmd: docker-compose --version
+  register: docker_compose_output
+  changed_when: false
+
+- name: Get latest Docker Compose binary checksum
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64.sha256"
+    dest: "/tmp/docker-compose-latest.sha256"
+  register: latest_compose_checksum
+  changed_when: false
+
+- name: Read latest Docker Compose checksum from file
+  ansible.builtin.command:
+    cmd: cat /tmp/docker-compose-latest.sha256
+  register: latest_compose_checksum_value
+  changed_when: false
+
+- name: Debug latest Docker Compose checksum
+  ansible.builtin.debug:
+    msg: "Latest Compose Checksum: {{ latest_compose_checksum_value.stdout }}"
+
+- name: Debug installed Docker Compose version
+  ansible.builtin.debug:
+    msg: "Installed Compose Version: {{ docker_compose_output.stdout }}"
+
+- name: Compare checksums and update if necessary
   ansible.builtin.get_url:
     url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64"
     dest: "/usr/local/bin/docker-compose"
     mode: "0755"
-    checksum: "sha256:https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64.sha256"
-  register: docker_compose_result
+  register: docker_compose_update
+  when:
+    - latest_compose_checksum_value.stdout is defined
+    - latest_compose_checksum_value.stdout | trim != ""
+    - docker_compose_output.stdout is defined
+    - docker_compose_output.stdout | trim != ""
+    - latest_compose_checksum_value.stdout not in docker_compose_output.stdout
 
-- name: Show if Docker Compose was updated
-  ansible.builtin.debug:
-    msg: "Docker Compose was updated! New checksum: {{ docker_compose_result.checksum_src }}"
-  when: docker_compose_result.changed
+- name: Restart Docker service if Docker Compose was updated
+  ansible.builtin.command:
+    cmd: systemctl restart docker
+  when: docker_compose_update.changed

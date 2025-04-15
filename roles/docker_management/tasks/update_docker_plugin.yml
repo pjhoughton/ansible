@@ -1,0 +1,24 @@
+---
+- name: Get current Docker Compose plugin version
+  ansible.builtin.command:
+    cmd: docker compose version
+  register: docker_plugin_version_output
+  changed_when: false
+
+- name: Get latest available Docker Compose plugin version
+  ansible.builtin.shell: "apt-cache madison docker-compose-plugin | awk '{print $3}' | head -1"
+  register: latest_docker_plugin_version
+  changed_when: false
+
+- name: Update Docker Compose plugin only if a new version is available
+  ansible.builtin.apt:
+    name: docker-compose-plugin
+    state: latest
+    update_cache: yes
+  when: docker_plugin_version_output.stdout != latest_docker_plugin_version.stdout | trim
+
+- name: Restart Docker service if plugin was updated
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  when: docker_plugin_version_output.stdout != latest_docker_plugin_version.stdout | trim

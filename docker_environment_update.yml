@@ -1,24 +1,17 @@
 ---
-# This Ansible playbook updates software and performs group-specific tasks:
-#
-
-
 - name: Update Docker Environment
   hosts: docker_servers
   become: yes
   vars:
-    install_docker_compose: true
+    verify_versions: true
+    remove_old_versions: false
+    install_docker: false
+    install_docker_compose: false
+    install_docker_plugin: false
     update_docker: true
     update_docker_compose: true
-    install_docker_plugin: true
-    pull_containers_and_restart: true
+    update_docker_plugin: true
+    pull_containers_and_restart: false
 
   roles:
     - role: docker_management
-      tasks_from: update_docker.yml
-    - role: docker_management
-      tasks_from: update_docker_compose.yml
-    - role: docker_management
-      tasks_from: install_docker_plugin.yml
-    - role: docker_management
-      tasks_from: pull_containers_and_restart.yml

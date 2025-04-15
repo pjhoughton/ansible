@@ -27,4 +27,3 @@
     pull_containers_and_restart: true
   roles:
     - role: docker_management
-      tasks_from: pull_containers_and_restart.yml

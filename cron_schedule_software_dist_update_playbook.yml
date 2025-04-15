@@ -1,0 +1,17 @@
+- name: Schedule Playbook Execution
+  hosts: workstations
+  become: yes
+  vars:
+    create_cron_playbook: true
+    
+    # Schedule the playbook to run on the 1st day of each month at 4 AM
+    cron_playbook_name: software_dist_update
+    cron_playbook_minute: "30"
+    cron_playbook_hour: "4"
+    cron_playbook_day: "1"  # Runs on the first day of the month
+    cron_playbook_month: "*"
+    cron_playbook_weekday: "*"
+    cron_playbook_command: "ansible-playbook /home/paul/ansible/software_dist_upgrade.yml"
+
+  roles:
+    - file_management

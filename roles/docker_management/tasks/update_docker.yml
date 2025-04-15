@@ -1,12 +1,24 @@
-- name: Update Docker
+- name: Get current Docker version
+  ansible.builtin.command:
+    cmd: docker --version
+  register: docker_version_output
+  changed_when: false
+
+- name: Get latest available Docker version
+  ansible.builtin.shell: "apt-cache madison docker-ce | awk '{print $3}' | head -1"
+  register: latest_docker_version
+  changed_when: false
+  
+  
+- name: Update Docker only if a new version is available
   ansible.builtin.apt:
     name: docker-ce
     state: latest
     update_cache: yes
-  register: docker_update_result
+  when: docker_version_output.stdout != latest_docker_version.stdout
 
 - name: Restart Docker service if updated
   ansible.builtin.service:
     name: docker
     state: restarted
-  when: docker_update_result.changed
+  when: docker_version_output.stdout != latest_docker_version.stdout
