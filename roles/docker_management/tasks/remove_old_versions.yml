@@ -1,0 +1,9 @@
+- name: Remove old Docker Compose plugin
+  ansible.builtin.apt:
+    name: "{{ docker_compose_plugin_package }}"
+    state: absent
+
+- name: Remove old Docker binary (if needed)
+  ansible.builtin.apt:
+    name: "docker"
+    state: absent

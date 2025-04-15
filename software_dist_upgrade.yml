@@ -1,6 +1,7 @@
----
 # This Ansible playbook performs the following tasks:
-# - Executes a distribution upgrade on all servers by leveraging the software_management role.
+# - Executes a distribution upgrade on all servers using the software_management role.
+# - Updates Docker, Docker Compose, and the Docker Compose plugin using the docker_management role.
+# - Pulls updated container images and restarts services only if necessary.
 
 - name: Software Dist Upgrade Playbook
   hosts: all
@@ -10,12 +11,22 @@
   roles:
     - role: software_management
 
-- name: Update Docker Containers
+- name: Update Docker Environment
   hosts: docker_servers
   become: yes
   vars:
-    check_update_docker_compose: true
+    install_docker_compose: true
+    update_docker: true
+    update_docker_compose: true
+    install_docker_plugin: true
+    pull_containers_and_restart: true
+
   roles:
     - role: docker_management
-
-
+      tasks_from: update_docker.yml
+    - role: docker_management
+      tasks_from: update_docker_compose.yml
+    - role: docker_management
+      tasks_from: install_docker_plugin.yml
+    - role: docker_management
+      tasks_from: pull_containers_and_restart.yml

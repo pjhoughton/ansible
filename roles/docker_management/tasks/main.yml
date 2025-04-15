@@ -1,17 +1,36 @@
 ---
 # Include individual tasks based on conditions
 # Set all to False by default so only run when specifically called  
-- name: Include docker_pull tasks
-  include_tasks: docker_pull.yml
-  when: docker_pull | default(false)
+- name: Remove Docker old versions 
+  include_tasks: remove_old_versions.yml
+  when: remove_old_versions | default(false)
   
-- name: Include Check update docker compose
-  include_tasks: check_update_docker_compose.yml
-  when: check_update_docker_compose | default(false)
+- name: install docker
+  include_tasks: install_docker.yml
+  when: install_docker | default(false)
   
-- name: Include Check update docker compose
-  include_tasks: docker_install.yml
-  when: docker_install | default(false)
+- name: Install docker compose
+  include_tasks: install_docker_compose.yml
+  when: install_docker_compose | default(false)
   
+- name: install docker plug in
+  include_tasks: install_docker_plugin.yml
+  when: install_docker_plugin | default(false)
+  
+- name: Update Docker
+  include_tasks: update_docker.yml
+  when: update_docker | default(false)
+  
+- name: Update Docker Compose 
+  include_tasks: update_docker_compose.yml
+  when: update_docker_compose | default(false)
+  
+- name: Pull containers and restart 
+  include_tasks: pull_containers_and_restart.yml
+  when: pull_containers_and_restart | default(false)
+  
+- name: verify versions
+  include_tasks: verify_versions.yml
+  when: verify_versions | default(false)
   
   

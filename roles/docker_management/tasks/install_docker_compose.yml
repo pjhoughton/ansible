@@ -1,0 +1,10 @@
+- name: Download latest Docker Compose binary
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64"
+    dest: "{{ docker_compose_binary_path }}"
+    mode: '0755'
+
+- name: Ensure Docker Compose is executable
+  ansible.builtin.file:
+    path: "{{ docker_compose_binary_path }}"
+    mode: '0755'

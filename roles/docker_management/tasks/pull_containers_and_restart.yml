@@ -1,0 +1,17 @@
+- name: Pull latest container images
+  ansible.builtin.command:
+    cmd: docker compose pull
+    chdir: "{{ docker_compose_service_path }}"
+  register: pull_result
+  changed_when: pull_result.rc == 0
+
+- name: Show updated images
+  ansible.builtin.debug:
+    msg: "Updated Docker images: {{ pull_result.stdout_lines }}"
+  when: pull_result.changed
+
+- name: Restart services if updates detected
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ docker_compose_service_path }}"
+  when: pull_result.changed

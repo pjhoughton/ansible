@@ -1,12 +1,11 @@
 ---
 # This Ansible playbook updates software and performs group-specific tasks:
 #
-# - Pulls Docker images using Docker Compose v2 for servers in the docker_servers group.
+# This playbook pulls updated Docker images and restarts containers only if needed.
 
-- name: Pull Docker images using Docker Compose v2
+- name: Pull Docker images and restart containers if updated
   hosts: docker_servers
   become: yes
-  vars:
-    docker_pull: true
   roles:
     - role: docker_management
+      tasks_from: pull_containers_and_restart.yml

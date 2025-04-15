@@ -1,0 +1,18 @@
+- name: Check Docker version
+  ansible.builtin.command: docker --version
+  register: docker_version_output
+
+- name: Check standalone Docker Compose version
+  ansible.builtin.command: docker-compose --version
+  register: docker_compose_output
+
+- name: Check Docker CLI plugin version
+  ansible.builtin.command: docker compose version
+  register: docker_plugin_output
+
+- name: Display Installed Versions
+  ansible.builtin.debug:
+    msg: |
+      Docker Version: {{ docker_version_output.stdout }}
+      Docker Compose (Standalone) Version: {{ docker_compose_output.stdout }}
+      Docker Compose (Plugin) Version: {{ docker_plugin_output.stdout }}

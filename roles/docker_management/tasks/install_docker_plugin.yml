@@ -1,0 +1,5 @@
+- name: Install Docker Compose plugin for Docker CLI
+  ansible.builtin.apt:
+    name: "{{ docker_compose_plugin_package }}"
+    state: present
+    update_cache: yes

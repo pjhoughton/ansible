@@ -1,0 +1,12 @@
+- name: Update Docker
+  ansible.builtin.apt:
+    name: docker-ce
+    state: latest
+    update_cache: yes
+  register: docker_update_result
+
+- name: Restart Docker service if updated
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  when: docker_update_result.changed

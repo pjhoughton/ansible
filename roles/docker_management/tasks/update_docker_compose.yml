@@ -1,0 +1,12 @@
+- name: Download latest Docker Compose binary only if needed
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64"
+    dest: "/usr/local/bin/docker-compose"
+    mode: "0755"
+    checksum: "sha256:https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64.sha256"
+  register: docker_compose_result
+
+- name: Show if Docker Compose was updated
+  ansible.builtin.debug:
+    msg: "Docker Compose was updated! New checksum: {{ docker_compose_result.checksum_src }}"
+  when: docker_compose_result.changed

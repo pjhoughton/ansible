@@ -1,5 +1,10 @@
 ---
 # defaults file for docker_management
+docker_compose_binary_path: "/usr/local/bin/docker-compose"
+docker_compose_plugin_package: "docker-compose-plugin"
+docker_ce_package: "docker-ce"
+docker_compose_service_path: "/home/paul/docker/docker-compose"
+
 docker_src: "/home/paul/docker/docker-compose"  # Default path to the Docker Compose file
 docker_prerequisites:
   - apt-transport-https
