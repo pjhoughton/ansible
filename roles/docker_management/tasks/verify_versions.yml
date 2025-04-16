@@ -1,8 +1,23 @@
+- name: Get Docker Version
+  ansible.builtin.command: docker --version
+  register: docker_version_output
+  ignore_errors: true
+
+- name: Get Docker Compose (Standalone) Version
+  ansible.builtin.command: docker-compose --version
+  register: docker_compose_output
+  ignore_errors: true
+
+- name: Get Docker Compose (Plugin) Version
+  ansible.builtin.command: docker compose version
+  register: docker_plugin_output
+  ignore_errors: true
+
 - name: Store Docker and Compose versions
   ansible.builtin.set_fact:
     docker_version: "{{ docker_version_output.stdout | default('Unknown') }}"
     docker_compose_version: "{{ docker_compose_output.stdout | default('Unknown') }}"
-    docker_plugin_version: "{{ docker_plugin_output.stdout | default('Docker Compose Plugin NOT Installed') }}"
+    docker_plugin_version: "{{ 'Plugin detected but failing' if 'permission denied' in docker_plugin_output.stderr else docker_plugin_output.stdout | default('Docker Compose Plugin NOT Installed') }}"
 
 - name: Display Installed Versions
   ansible.builtin.debug:
