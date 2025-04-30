@@ -1,0 +1,5 @@
+plugin: community.general.xen_orchestra
+api_host: 10.10.20.20
+user: "{{ xen_orchestra_user }}"
+password: "{{ xen_orchestra_password }}"
+validate_certs: false
