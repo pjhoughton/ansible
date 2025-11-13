@@ -9,6 +9,9 @@
     cache_valid_time: 3600
     autoclean: yes
     autoremove: yes
+    lock_timeout: 120
+    update_cache_retries: 5
+    update_cache_retry_max_delay: 15
   when: ansible_facts['os_family'] == "Debian"
 
 - name: Update yum cache
