@@ -8,6 +8,7 @@
   become: yes
   vars:
     software_dist_upgrade: true
+    disk_cleanup: true
   roles:
     - role: software_management
 

@@ -3,3 +3,9 @@
   ansible.builtin.service:
     name: docker
     state: restarted
+    
+- name: log_docker_cleanup
+  lineinfile:
+    path: /var/log/docker_cleanup.log
+    create: yes
+    line: "Docker cleanup run on {{ ansible_date_time.iso8601 }} due to disk usage {{ disk_usage.stdout }}%"

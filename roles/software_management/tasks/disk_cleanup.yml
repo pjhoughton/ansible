@@ -1,0 +1,27 @@
+- name: Check disk usage on root volume
+  shell: "df --output=pcent / | tail -1 | tr -dc '0-9'"
+  register: disk_usage
+
+- name: Clean APT cache if disk usage exceeds threshold
+  apt:
+    autoclean: yes
+  when: disk_usage.stdout|int > 85
+
+- name: Vacuum journal logs if disk usage exceeds threshold
+  command: journalctl --vacuum-size=100M
+  when: disk_usage.stdout|int > 85
+
+- name: Truncate large system logs if disk usage exceeds threshold
+  shell: |
+    for log in /var/log/syslog /var/log/kern.log; do
+      [ -f "$log" ] && truncate -s 0 "$log"
+    done
+  when: disk_usage.stdout|int > 85
+
+- name: Remove unused swap.img if not in fstab
+  shell: |
+    if [ -f /swap.img ] && ! grep -q '/swap.img' /etc/fstab; then
+      swapoff /swap.img 2>/dev/null || true
+      rm -f /swap.img
+    fi
+  when: disk_usage.stdout|int > 85

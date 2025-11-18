@@ -20,4 +20,8 @@
 - name: Include software_dist_upgrade tasks
   include_tasks: software_dist_upgrade.yml
   when: software_dist_upgrade | default(false)
+  
+- name: disk_cleanup tasks
+  include_tasks: disk_cleanup.yml
+  when: disk_cleanup | default(false)
  
