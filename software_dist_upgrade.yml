@@ -19,6 +19,7 @@
     update_docker_compose: true
     update_docker_plugin: true
     pull_containers_and_restart: true
+    cleanup_docker: true
 
   roles:
     - role: docker_management

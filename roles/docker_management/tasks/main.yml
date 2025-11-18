@@ -38,5 +38,12 @@
   include_tasks: pull_containers_and_restart.yml
   when: pull_containers_and_restart | default(false)
   
+- name: cleanup_docker 
+  include_tasks: cleanup_docker.yml
+  when: cleanup_docker | default(false)
+  
+  
+ 
+  
 
 

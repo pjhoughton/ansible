@@ -1,0 +1,8 @@
+- name: Check disk usage on root volume
+  shell: "df --output=pcent / | tail -1 | tr -dc '0-9'"
+  register: disk_usage
+
+- name: Prune Docker system if disk usage exceeds threshold
+  command: docker system prune -af --volumes
+  when: disk_usage.stdout|int > 85
+  notify: log_docker_cleanup
