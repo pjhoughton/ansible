@@ -1,0 +1,37 @@
+# -------------------------------
+# Global Git Configuration
+# Author: Paul Houghton
+# Purpose: Identity, editor prefs, safety, and useful aliases
+# -------------------------------
+
+[user]
+    name = Paul Houghton                # Commit author name
+    email = paul.houghton@outlook.com   # Commit author email
+
+[core]
+    editor = nano                       # Use nano instead of vim
+    filemode = true                     # Track file permission changes (executable bit)
+    bare = false                        # Normal repo, not bare
+    logallrefupdates = true             # Keep logs of all ref updates
+
+[alias]
+    st = status                         # Quick status
+    co = checkout                       # Short checkout
+    br = branch                         # Short branch
+    cm = commit -m                      # Commit with message
+    lg = log --oneline --graph --decorate # Pretty log view
+
+[color]
+    ui = auto                           # Enable colored output for readability
+
+[push]
+    default = simple                    # Safer push behavior (only current branch)
+
+[rerere]
+    enabled = true                      # Reuse recorded conflict resolutions
+
+[safe]
+    directory = *                       # Avoid unsafe repo warnings
+
+[commit]
+    gpgsign = false                     # Disable GPG signing by default (enable if needed)

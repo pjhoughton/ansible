@@ -1,4 +1,6 @@
+# ───────────────────────────────────────────────
 # Override ignore rules for important files
+# Always keep these tracked, even if they match patterns below
 !inventory
 !ansible.cfg
 !README.md
@@ -11,23 +13,52 @@
 !.gitignore
 !.gitkeep
 
-
-# Ignore temporary and environment files
+# ───────────────────────────────────────────────
+# Ansible specific ignores
+# Vault pass files and runtime artifacts
 ansible_vault.pass
+tmp/
+retries/
+
+# ───────────────────────────────────────────────
+# Temporary and environment files
 *.swp
 *.tmp
 *.bak
 *.log
-.DS_Store
+*.old
+
+# ───────────────────────────────────────────────
+# Windows system and temp files
 Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+*.lnk
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.stackdump
 
+# ───────────────────────────────────────────────
+# Crash logs and dumps
+*.err
+*.dmp
 
+# ───────────────────────────────────────────────
+# Hidden system files (cross‑platform)
+.DS_Store
 
-# Ignore directories 
+# ───────────────────────────────────────────────
+# Python cache (if using Ansible modules locally)
+__pycache__/
+*.pyc
+*.pyo
 
-
-#Ignore and logs
-tmp/
-retries/
-*.log
-
+# ───────────────────────────────────────────────
+# IDE/editor configs
+.vscode/
+.idea/
+*.code-workspace
