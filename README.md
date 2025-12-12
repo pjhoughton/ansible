@@ -1,3 +1,31 @@
+# Ansible
+
+## Overview
+This repository contains Ansible playbooks and roles used to automate my homelab infrastructure.  
+It helps manage servers, deploy applications, and configure environments consistently.
+
+## Vision & Documentation
+This repository is part of my broader homelab and automation projects.  
+For the full vision, detailed documentation, and cross project context, visit my website:  
+👉 [pjhoughton.github.io](https://pjhoughton.github.io)
+
+*Building blocks of my homelab — automation, containers, and smart integrations, shared openly.*
+
+## Getting Started
+### Prerequisites
+- Ansible 2.15+
+- SSH access to target hosts
+- Inventory file configured
+
+### Usage
+Run a playbook against your inventory:
+```bash
+ansible-playbook -i inventory site.yml
+
+
+
+
+
 What is Ansible
 Ansible is an open-source IT automation engine that automates provisioning, configuration management, application deployment, orchestration, and many other IT processes. It is free to use and benefits from the experience and intelligence of its thousands of contributors.
 
