@@ -1,0 +1,95 @@
+---
+# Server Setup Playbook for iotapp1.houghton.network
+# This playbook is designed to:
+# - Ensure system is up-to-date
+# - Create users with home directories
+# - Add sudo permissions to users
+# - Add SSH keys for authentication
+# - Configure temporary directories to be accessible for the user during first setup
+
+- name: Server Setup Playbook
+  hosts: 
+  become: true
+  vars:
+    software_upgrade: true
+    create_user: true
+    make_sudoer: true
+    add_keys: true
+    ansible_remote_tmp: /tmp/.ansible-${USER}/tmp  # Ensure temporary files are placed in a universally accessible folder
+
+    users:
+      - name: usr_ansible
+        home: /home/usr_ansible
+        groups: sudo
+        sudoer: true
+
+    ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
+
+  tasks:
+    # Step 1: Ensure /tmp/.ansible-${USER}/tmp directory is created
+    - name: Create temporary directory for Ansible to use (to avoid permission issues)
+      file:
+        path: "{{ ansible_remote_tmp }}"
+        state: directory
+        mode: '0700'
+        owner: root
+        group: root
+
+    # Step 2: Update system packages
+    - name: Ensure the system is up-to-date (software upgrade)
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+      when: software_upgrade
+
+    # Step 3: Create the specified users
+    - name: Create new users with home folders
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        home: "{{ item.home }}"
+        create_home: yes
+        state: present
+        groups: "{{ item.groups }}"
+      loop: "{{ users }}"
+      when: create_user
+      tags:
+        - user_management
+        - create_user
+
+    # Step 4: Set ownership and permissions of home folders
+    - name: Set ownership and permissions of home folders
+      ansible.builtin.file:
+        path: "{{ item.home }}"
+        owner: "{{ item.name }}"
+        group: "sudo"
+        mode: '0755'
+      loop: "{{ users }}"
+      when: create_user
+      tags:
+        - user_management
+        - set_permissions
+
+    # Step 5: Add users to sudoers
+    - name: Make users sudoers by creating files in sudoers.d
+      ansible.builtin.copy:
+        dest: "/etc/sudoers.d/{{ item.name }}"
+        content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+        owner: root
+        group: root
+        mode: '0440'
+      when: item.sudoer and make_sudoer | bool
+      loop: "{{ users }}"
+      tags:
+        - user_management
+        - make_sudoer
+
+    # Step 6: Add SSH key to users
+    - name: Add SSH key to users
+      ansible.builtin.authorized_key:
+        user: "{{ item.name }}"
+        key: "{{ ssh_key }}"
+      when: add_keys
+      loop: "{{ users }}"
+      tags:
+        - key_management
+        - add_keys

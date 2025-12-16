@@ -1,5 +1,6 @@
 [docker_servers]
 docker.houghton.network
+iotapp1.houghton.network
 
 [file_servers]
 docker.houghton.network
