@@ -1,0 +1,3 @@
+# Server app1 Variables
+
+docker_compose_service_path: /home/paul/docker/stacks/app1

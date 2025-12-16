@@ -1,17 +1,21 @@
-- name: Pull latest container images
-  ansible.builtin.command:
-    cmd: docker compose pull
-    chdir: "{{ docker_compose_service_path }}"
-  register: pull_result
-  changed_when: pull_result.rc == 0
+- name: Ensure docker-compose.yml exists
+  ansible.builtin.stat:
+    path: "{{ docker_compose_service_path }}/docker-compose.yml"
+  register: compose_file
 
-- name: Show updated images
-  ansible.builtin.debug:
-    msg: "Updated Docker images: {{ pull_result.stdout_lines }}"
-  when: pull_result.changed
+- name: Fail if docker-compose.yml is missing
+  ansible.builtin.fail:
+    msg: "docker-compose.yml not found in {{ docker_compose_service_path }}"
+  when: not compose_file.stat.exists
 
-- name: Restart services if updates detected
-  ansible.builtin.command:
-    cmd: docker compose up -d
-    chdir: "{{ docker_compose_service_path }}"
-  when: pull_result.changed
+- name: Pull and restart Docker containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_compose_service_path }}"
+    pull: always        # pull latest images
+    recreate: always    # recreate containers if images changed
+    state: present      # ensure containers are running
+  become: yes
+  become_user: paul
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+  when: compose_file.stat.exists
