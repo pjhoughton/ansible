@@ -8,7 +8,7 @@
 # - Configure temporary directories to be accessible for the user during first setup
 
 - name: Server Setup Playbook
-  hosts: 
+  hosts: iotapp1.houghton.network
   become: true
   vars:
     software_upgrade: true
