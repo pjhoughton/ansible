@@ -1,0 +1,7 @@
+---
+# defaults file for git
+
+git_repo_paths: []          # list of repo paths for the host
+git_check_status: false
+git_pull_clean: false
+git_report_dirty: false

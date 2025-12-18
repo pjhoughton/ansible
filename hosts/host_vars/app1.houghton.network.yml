@@ -1,4 +1,9 @@
 
+# Server app1 Variables
 
-# host_vars/docker.houghton.network.yml
 docker_compose_service_path: /home/paul/docker/stacks/app1
+
+git_repo_paths:
+  - /home/paul/docker
+  - /home/paul/ansible
+

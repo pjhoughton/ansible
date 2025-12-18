@@ -1,0 +1,8 @@
+---
+- name: Pull clean repositories
+  git:
+    repo: "{{ item }}"
+    dest: "{{ item }}"
+    update: yes
+  loop: "{{ git_repos }}"
+  when: git_pull_clean and git_status_clean[item]

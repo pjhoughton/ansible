@@ -1,12 +1,16 @@
 [docker_servers]
-docker.houghton.network
+app1.houghton.network
 iotapp1.houghton.network
 
 [file_servers]
-docker.houghton.network
+app1.houghton.network
+
+[git_servers]
+app1.houghton.network
+iotapp1.houghton.network
 
 [workstations]
-ansible.houghton.network
+app1.houghton.network
 
 [xcp_servers]
 xo.houghton.network

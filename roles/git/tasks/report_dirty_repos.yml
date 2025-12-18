@@ -1,0 +1,6 @@
+---
+- name: Report dirty repositories
+  debug:
+    msg: "Repository {{ item }} has uncommitted changes!"
+  loop: "{{ git_repos }}"
+  when: git_report_dirty and not git_status_clean[item]

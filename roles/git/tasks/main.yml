@@ -1,0 +1,15 @@
+# roles/git/tasks/main.yml
+# Include individual git tasks based on flags
+# Set all to False by default so only run when specifically called  
+
+- name: Check git repository status
+  include_tasks: check_repo_status.yml
+  when: git_check_status | default(false)
+
+- name: Pull clean git repositories
+  include_tasks: pull_clean_repos.yml
+  when: git_pull_clean | default(false)
+
+- name: Report dirty git repositories
+  include_tasks: report_dirty_repos.yml
+  when: git_report_dirty | default(false)

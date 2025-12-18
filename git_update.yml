@@ -1,0 +1,13 @@
+- name: Check Git Status and Pull if clean
+  hosts: git_servers
+  become: yes
+  vars:
+    git_check_status: true
+    git_pull_clean: true
+    git_report_dirty: true
+  roles:
+    - git
+  tasks:
+    - name: Show discovered git repositories
+      debug:
+        var: git_repos
