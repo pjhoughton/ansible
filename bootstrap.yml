@@ -1,5 +1,6 @@
 - name: Server Setup Playbook
-  hosts: iotapp1.houghton.network
+  hosts: new_servers
+
   become: true
 
   vars:
