@@ -1,9 +1,12 @@
 [docker_servers]
 app1.houghton.network
+app.houghton.network
 iotapp1.houghton.network
 
 [file_servers]
 app1.houghton.network
+app.houghton.network
+iotapp1.houghton.network
 
 [git_servers]
 app1.houghton.network
@@ -11,6 +14,7 @@ iotapp1.houghton.network
 
 [workstations]
 app1.houghton.network
+app.houghton.network  
 
 [xcp_servers]
 #xo.houghton.network
@@ -18,9 +22,12 @@ app1.houghton.network
 
 
 [test_servers]
-testubuntu1.houghton.network 
+testubuntu1.houghton.network  
 
-[new]
+
+[new_servers]
+
+
 # for new servers add this to the end of hostname ansible_user=paul ansible_ssh_private_key_file=/home/paul/.ssh/id_ed25519
 # run ansible-playbook bootstrap.yml  -u paul    --ask-become-pass  which will create the ansibleuser needed then 
 

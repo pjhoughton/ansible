@@ -1,10 +1,13 @@
 ---
+# 1. Get current Docker Compose v2 version
 - name: Get current Docker Compose version
   ansible.builtin.command:
-    cmd: docker-compose --version
+    cmd: docker compose version --short
   register: docker_compose_output
   changed_when: false
+  failed_when: false
 
+# 2. Download latest Compose v2 binary checksum (same structure as your v1 logic)
 - name: Get latest Docker Compose binary checksum
   ansible.builtin.get_url:
     url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64.sha256"
@@ -12,20 +15,24 @@
   register: latest_compose_checksum
   changed_when: false
 
+# 3. Read checksum from file
 - name: Read latest Docker Compose checksum from file
   ansible.builtin.command:
     cmd: cat /tmp/docker-compose-latest.sha256
   register: latest_compose_checksum_value
   changed_when: false
 
+# 4. Debug latest checksum
 - name: Debug latest Docker Compose checksum
   ansible.builtin.debug:
     msg: "Latest Compose Checksum: {{ latest_compose_checksum_value.stdout }}"
 
+# 5. Debug installed version
 - name: Debug installed Docker Compose version
   ansible.builtin.debug:
     msg: "Installed Compose Version: {{ docker_compose_output.stdout }}"
 
+# 6. Download updated Compose v2 binary if checksum differs
 - name: Compare checksums and update if necessary
   ansible.builtin.get_url:
     url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64"
@@ -39,6 +46,7 @@
     - docker_compose_output.stdout | trim != ""
     - latest_compose_checksum_value.stdout not in docker_compose_output.stdout
 
+# 7. Restart Docker if Compose was updated
 - name: Restart Docker service if Docker Compose was updated
   ansible.builtin.command:
     cmd: systemctl restart docker
