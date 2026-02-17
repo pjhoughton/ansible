@@ -13,3 +13,7 @@
   include_tasks: swap_file.yml
   when: swap_file | default(false)
   
+- name: enable UFW 
+  include_tasks: ufw.yml
+  when: ufw | default(false)
+  

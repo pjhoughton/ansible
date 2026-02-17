@@ -4,4 +4,18 @@ docker_compose_service_path: /home/paul/docker/stacks/iotapp1
 
 git_repo_paths:
   - /home/paul/docker
+ufw_custom_ports:
+  - { port: "6767",  proto: "tcp" }   # Bazarr
+  - { port: "7878",  proto: "tcp" }   # Radarr
+  - { port: "8080",  proto: "tcp" }   # Sabnzbd
+  - { port: "8989",  proto: "tcp" }   # Sonarr
+
+  # NFS client
+  - { port: "111",   proto: "tcp" }
+  - { port: "111",   proto: "udp" }
+  - { port: "2049",  proto: "tcp" }
+  - { port: "2049",  proto: "udp" }
+
+  # Plex core
+  - { port: "32400", proto: "tcp" }
 

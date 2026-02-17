@@ -1,8 +1,6 @@
-- name: Server Setup Playbook
+- name: Make server ansible managed 
   hosts: new_servers
-
   become: true
-
   vars:
     software_upgrade: true
     create_user: true
@@ -10,11 +8,11 @@
     add_keys: true
 
     users:
-      - name: paul
-        home: /home/paul
+      - name: usr_ansible
+        home: /home/usr_ansible
         groups: sudo
         sudoer: true
-
+        
     ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS321RVYEcDx3OdOiSe+YZSE3h0/RNemdRXUeGSWc99 ansible"
 
   tasks:
@@ -23,6 +21,29 @@
     - import_tasks: roles/user_management/tasks/make_sudoer.yml
     - import_tasks: roles/key_management/tasks/add_keys.yml
 
+
+- name: Setup Server 
+  hosts: new_servers
+  become: true
+  vars:
+    ufw: true
+    set_timezone: true
+    swap_file: true
+    disable_ipv6: true
+    
+  roles:
+    - role: server_deploy
+    
+- name: Install Software
+  hosts: new_servers
+  become: true
+  vars:
+     software_install: true
+     software_list:
+      - aptitude
+      - cockpit
+  tasks:    
+     - import_tasks: roles/software_management/tasks/software_install.yml
 
 
 

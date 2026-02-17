@@ -6,4 +6,27 @@ docker_compose_service_path: /home/paul/docker/stacks/app1
 git_repo_paths:
   - /home/paul/docker
   - /home/paul/ansible
+  
+ufw_custom_ports:
+  - { port: "80",    proto: "tcp" } # nginxproxy
+  - { port: "81",    proto: "tcp" }# nginxproxy
+  - { port: "3000",  proto: "tcp" } # homepage
+  - { port: "4443",  proto: "tcp" } # XO
 
+  # Plex core
+  - { port: "32400", proto: "tcp" }
+
+  # Plex DLNA + discovery
+ # - { port: "1900",  proto: "udp" }
+ #- { port: "32410", proto: "udp" }
+ #- { port: "32412", proto: "udp" }
+ # - { port: "32413", proto: "udp" }
+ # - { port: "32414", proto: "udp" }
+ # - { port: "8324",  proto: "tcp" }
+ # - { port: "32469", proto: "tcp" }
+
+  # NFS client
+  - { port: "111",   proto: "tcp" }
+  - { port: "111",   proto: "udp" }
+  - { port: "2049",  proto: "tcp" }
+  - { port: "2049",  proto: "udp" }
