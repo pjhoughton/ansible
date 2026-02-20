@@ -17,13 +17,13 @@ ufw_custom_ports:
   - { port: "32400", proto: "tcp" }
 
   # Plex DLNA + discovery
- # - { port: "1900",  proto: "udp" }
- #- { port: "32410", proto: "udp" }
- #- { port: "32412", proto: "udp" }
- # - { port: "32413", proto: "udp" }
- # - { port: "32414", proto: "udp" }
- # - { port: "8324",  proto: "tcp" }
- # - { port: "32469", proto: "tcp" }
+  - { port: "1900",  proto: "udp" }
+  - { port: "32410", proto: "udp" }
+  - { port: "32412", proto: "udp" }
+  - { port: "32413", proto: "udp" }
+  - { port: "32414", proto: "udp" }
+  - { port: "8324",  proto: "tcp" }
+  - { port: "32469", proto: "tcp" }
 
   # NFS client
   - { port: "111",   proto: "tcp" }

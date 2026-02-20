@@ -1,1 +1,4 @@
 # file servers Variables
+
+software_list: 
+  -nfs-common
