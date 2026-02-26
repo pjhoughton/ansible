@@ -47,6 +47,7 @@ secrets.yaml
 *.credentials
 *.config.json
 .gitconfig
+ansible_vault.pass
 
 # ───────────────────────────────────────────────
 # Temporary and environment files

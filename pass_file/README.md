@@ -29,6 +29,8 @@ Ansible Vault is a feature of ansible that allows you to keep sensitive data suc
 # Create a secure password file 
 
  openssl rand -base64 4096 >pass_file/demo_ansible_vault.pass - create a password file
+chmod 600 ~/demo_ansible_vault.pass
+
 
 Create a new fault
 
