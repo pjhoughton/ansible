@@ -1,11 +1,11 @@
-# tasks/create_cron_playbook.yml
 ---
 - name: Create cron job for running playbook
   cron:
     name: "{{ cron_playbook_name }}"
+    user: paul
     minute: "{{ cron_playbook_minute }}"
     hour: "{{ cron_playbook_hour }}"
     day: "{{ cron_playbook_day }}"
     month: "{{ cron_playbook_month }}"
     weekday: "{{ cron_playbook_weekday }}"
-    job: "{{ cron_playbook_command }}"
+    job: "ansible-playbook -i /home/paul/ansible/hosts/simple_inventory /home/paul/ansible/{{ cron_playbook_command }} >> /home/paul/ansible/ansible_update.log 2>&1"

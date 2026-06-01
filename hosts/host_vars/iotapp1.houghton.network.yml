@@ -4,6 +4,14 @@ docker_compose_service_path: /home/paul/docker/stacks/iotapp1
 
 git_repo_paths:
   - /home/paul/docker
+  
+  
+git_repositories:
+  - name: docker
+    path: /home/paul/docker
+    url: git@github.com:pjhoughton/docker.git
+    
+    
 ufw_custom_ports:
   - { port: "6767",  proto: "tcp" }   # Bazarr
   - { port: "7878",  proto: "tcp" }   # Radarr

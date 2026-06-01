@@ -5,6 +5,10 @@
 - name: Check git repository status
   include_tasks: check_repo_status.yml
   when: git_check_status | default(false)
+  
+- name: Get git repository status
+  include_tasks: get_repo_status.yml
+  when: git_repo_status | default(false)
 
 - name: Pull clean git repositories
   include_tasks: pull_clean_repos.yml

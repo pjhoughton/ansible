@@ -6,6 +6,7 @@
 - name: Software Dist Upgrade Playbook
   hosts: all
   become: yes
+  strategy: free
   vars:
     software_dist_upgrade: true
     disk_cleanup: true

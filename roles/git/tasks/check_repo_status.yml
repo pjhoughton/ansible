@@ -1,20 +1,44 @@
-# roles/git/tasks/check_repo_status.yml
-- name: Ensure git_repo_paths is defined
+---
+# Ensure git_repositories is defined
+- name: Ensure git_repositories is defined
   ansible.builtin.set_fact:
-    git_repo_paths: "{{ git_repo_paths | default([]) }}"
+    git_repositories: "{{ git_repositories | default([]) }}"
 
-# Mark each git repository as safe for the effective user
+# Ensure repo directories are owned by paul
+- name: Ensure git repo directories are owned by paul
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: paul
+    group: paul
+    recurse: yes
+  loop: "{{ git_repositories }}"
+
+# Remove duplicate safe.directory entries
+- name: Remove duplicate safe.directory entries
+  ansible.builtin.command:
+    cmd: git config --global --unset-all safe.directory
+  become: yes
+  become_user: paul
+  environment:
+    HOME: "/home/paul"
+    XDG_CONFIG_HOME: "/home/paul/.config"
+  ignore_errors: yes
+
+# Mark each git repository path as safe
 - name: Mark git repositories as safe
   ansible.builtin.command:
-    cmd: git config --global --add safe.directory {{ item }}
-  loop: "{{ git_repo_paths }}"
+    cmd: git config --global --add safe.directory {{ item.path }}
+  loop: "{{ git_repositories }}"
   become: yes
-  become_user: paul  # adjust if the repos are owned by a different user
+  become_user: paul
+  environment:
+    HOME: "/home/paul"
+    XDG_CONFIG_HOME: "/home/paul/.config"
   ignore_errors: yes
 
 # Detect if the path itself is a git repo
 - name: Detect if the path itself is a git repo
   ansible.builtin.stat:
-    path: "{{ item }}/.git"
-  loop: "{{ git_repo_paths }}"
+    path: "{{ item.path }}/.git"
+  loop: "{{ git_repositories }}"
   register: git_paths_stat

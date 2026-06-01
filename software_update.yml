@@ -6,6 +6,7 @@
 - name: Update and Upgrade Software
   hosts: all
   become: yes
+  strategy: free
   vars:
     software_cache: true
     software_upgrade: true

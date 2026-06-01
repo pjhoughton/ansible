@@ -1,0 +1,21 @@
+---
+# Create a dict to store repo cleanliness
+- name: Initialize git_status_clean
+  ansible.builtin.set_fact:
+    git_status_clean: {}
+
+# Check git status for each repository
+- name: Check if repository is clean
+  ansible.builtin.command:
+    cmd: git status --porcelain
+    chdir: "{{ item.path }}"
+  register: repo_status
+  loop: "{{ git_repositories }}"
+  changed_when: false
+  failed_when: false
+
+# Build git_status_clean dict
+- name: Build git_status_clean dictionary
+  ansible.builtin.set_fact:
+    git_status_clean: "{{ git_status_clean | combine({ item.item.name: (item.stdout == '') }) }}"
+  loop: "{{ repo_status.results }}"

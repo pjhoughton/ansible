@@ -5,6 +5,7 @@
 
 - name: Pull Docker images and restart containers if updated
   hosts: docker_servers
+  strategy: free
   become: yes
   vars:
     pull_containers_and_restart: true

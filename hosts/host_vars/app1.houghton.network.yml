@@ -7,6 +7,16 @@ git_repo_paths:
   - /home/paul/docker
   - /home/paul/ansible
   
+git_repositories:
+  - name: ansible
+    path: /home/paul/ansible
+    url: git@github.com:pjhoughton/ansible.git
+
+  - name: docker
+    path: /home/paul/docker
+    url: git@github.com:pjhoughton/docker.git
+
+  
 ufw_custom_ports:
   - { port: "80",    proto: "tcp" } # nginxproxy
   - { port: "81",    proto: "tcp" }# nginxproxy
