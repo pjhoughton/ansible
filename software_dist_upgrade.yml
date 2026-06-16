@@ -5,6 +5,8 @@
 
 - name: Software Dist Upgrade Playbook
   hosts: all
+  ignore_unreachable: "{{ hostvars[inventory_hostname].ignore_unreachable | default(false) }}"
+
   become: yes
   strategy: free
   vars:
@@ -16,6 +18,7 @@
 
 - name: Update Docker Environment
   hosts: docker_servers
+  ignore_unreachable: "{{ hostvars[inventory_hostname].ignore_unreachable | default(false) }}"
   become: yes
   vars:
     update_docker: true
@@ -26,3 +29,12 @@
 
   roles:
     - role: docker_management
+    
+- name: Update Xen Orchestra
+  hosts: xcp_servers
+  ignore_unreachable: "{{ hostvars[inventory_hostname].ignore_unreachable | default(false) }}"
+  become: yes
+  vars:
+    xen_update: true
+  roles:
+    - role: xo_management

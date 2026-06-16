@@ -12,34 +12,57 @@
     lock_timeout: 120
     update_cache_retries: 5
     update_cache_retry_max_delay: 15
-  when: ansible_facts['os_family'] == "Debian"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_facts.get('distribution') in ['Ubuntu', 'Debian']
 
+
+
+# ---------------------------------------------------------
+# RedHat (YUM)
+# ---------------------------------------------------------
 - name: Update yum cache
   ansible.builtin.yum:
     update_cache: yes
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) < 8
 
 - name: Clean yum cache
   ansible.builtin.command:
     cmd: yum clean all
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) < 8
 
-- name: Autoremove unnecessary packages
+- name: Autoremove unnecessary packages (yum)
   ansible.builtin.command:
     cmd: yum autoremove
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) < 8
 
+
+# ---------------------------------------------------------
+# RedHat (DNF)
+# ---------------------------------------------------------
 - name: Update dnf cache
   ansible.builtin.dnf:
     update_cache: yes
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) >= 8
 
 - name: Clean dnf cache
   ansible.builtin.command:
     cmd: dnf clean all
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) >= 8
 
-- name: Autoremove unnecessary packages with dnf
+- name: Autoremove unnecessary packages (dnf)
   ansible.builtin.command:
     cmd: dnf autoremove
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) >= 8

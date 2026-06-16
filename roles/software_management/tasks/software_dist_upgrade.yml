@@ -11,7 +11,11 @@
     upgrade: dist
     autoremove: yes
     autoclean: yes
-  when: ansible_facts['distribution'] in ['Ubuntu', 'Debian']
+    lock_timeout: 120
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_facts.get('distribution') in ['Ubuntu', 'Debian']
+
 
 
 # ---------------------------------------------------------
@@ -21,13 +25,17 @@
   ansible.builtin.yum:
     name: '*'
     state: latest
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int < 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) < 8
 
 - name: Perform upgrade on Red Hat-based distros with dnf
   ansible.builtin.dnf:
     name: '*'
     state: latest
-  when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
+  when:
+    - ansible_facts.get('os_family') == "RedHat"
+    - (ansible_facts.get('distribution_major_version') | default(0) | int) >= 8
 
 
 # ---------------------------------------------------------
@@ -37,7 +45,7 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
   register: debian_reboot_file
-  when: ansible_facts['distribution'] in ['Ubuntu', 'Debian']
+  when: ansible_facts.get('distribution') in ['Ubuntu', 'Debian']
 
 
 # ---------------------------------------------------------
@@ -47,7 +55,7 @@
   ansible.builtin.stat:
     path: /usr/bin/needs-restarting
   register: needs_restarting_bin
-  when: ansible_facts['os_family'] == "RedHat"
+  when: ansible_facts.get('os_family') == "RedHat"
 
 - name: Check if reboot is required with needs-restarting
   ansible.builtin.command: needs-restarting -r
@@ -55,7 +63,7 @@
   failed_when: yum_dnf_reboot_check.rc not in [0, 1]
   changed_when: false
   when:
-    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts.get('os_family') == "RedHat"
     - needs_restarting_bin.stat.exists
 
 
@@ -65,14 +73,24 @@
 - name: Set reboot_required fact (Debian)
   ansible.builtin.set_fact:
     reboot_required: "{{ debian_reboot_file.stat.exists }}"
-  when: ansible_facts['distribution'] in ['Ubuntu', 'Debian']
+  when: ansible_facts.get('distribution') in ['Ubuntu', 'Debian']
 
 - name: Set reboot_required fact (RedHat)
   ansible.builtin.set_fact:
     reboot_required: "{{ yum_dnf_reboot_check.rc == 1 }}"
   when:
-    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts.get('os_family') == "RedHat"
     - needs_restarting_bin.stat.exists
+
+
+
+# ---------------------------------------------------------
+# Ensure reboot_required is defined for unreachable hosts
+# ---------------------------------------------------------
+- name: Ensure reboot_required is defined
+  ansible.builtin.set_fact:
+    reboot_required: false
+  when: reboot_required is not defined
 
 
 # ---------------------------------------------------------

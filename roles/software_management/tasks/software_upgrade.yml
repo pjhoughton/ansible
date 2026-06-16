@@ -3,9 +3,17 @@
 
 - name: Upgrade all installed packages on Debian-based distros
   ansible.builtin.apt:
-    upgrade: yes
     update_cache: yes
-  when: ansible_facts['os_family'] == "Debian"
+    cache_valid_time: 3600
+    upgrade: yes
+    autoremove: yes
+    autoclean: yes
+    lock_timeout: 120
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_facts.get('distribution') in ['Ubuntu', 'Debian']
+
+
 
 - name: Upgrade all installed packages on Red Hat-based distros
   ansible.builtin.yum:
