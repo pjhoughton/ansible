@@ -1,0 +1,117 @@
+- name: Full Linux Inventory (Flat Key/Value)
+  hosts: all
+  gather_facts: yes
+
+  vars:
+    inventory_output_dir: "/home/paul/ansible/inventory_output"
+
+  tasks:
+
+    - name: Ensure output directory exists
+      delegate_to: localhost
+      file:
+        path: "{{ inventory_output_dir }}"
+        state: directory
+
+    - name: Build base inventory
+      set_fact:
+        linux_inventory:
+          hostname: "{{ ansible_hostname }}"
+          fqdn: "{{ ansible_fqdn }}"
+          os: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+          kernel: "{{ ansible_kernel }}"
+          architecture: "{{ ansible_architecture }}"
+          cpu_model: "{{ ansible_processor[1] }}"
+          cpu_cores: "{{ ansible_processor_cores }}"
+          cpu_count: "{{ ansible_processor_count }}"
+          cpu_mhz: "{{ ansible_processor_speed_mhz | default(ansible_processor[2]) }}"
+          mem_total_mb: "{{ ansible_memtotal_mb }}"
+          mem_free_mb: "{{ ansible_memfree_mb }}"
+          swap_total_mb: "{{ ansible_swaptotal_mb }}"
+          swap_free_mb: "{{ ansible_swapfree_mb }}"
+          default_ipv4: "{{ ansible_default_ipv4.address }}"
+          mac_default: "{{ ansible_default_ipv4.macaddress }}"
+          interfaces: "{{ ansible_interfaces | select('match','^e') | join(', ') }}"
+          timezone: "{{ ansible_date_time.tz }}"
+          boot_time: "{{ ansible_date_time.epoch }}"
+          virtualization_type: "{{ ansible_virtualization_type }}"
+          virtualization_role: "{{ ansible_virtualization_role }}"
+          system_uuid: "{{ ansible_product_uuid }}"
+          serial_number: "{{ ansible_product_serial }}"
+          manufacturer: "{{ ansible_system_vendor }}"
+          product_name: "{{ ansible_product_name }}"
+          bios_version: "{{ ansible_bios_version }}"
+          selinux_status: "{{ ansible_selinux.status | default('disabled') }}"
+          firewall: "{{ ansible_facts.services['firewalld.service'].state | default('unknown') }}"
+          dns_servers: "{{ ansible_dns.nameservers | join(', ') }}"
+          default_gateway: "{{ ansible_default_ipv4.gateway }}"
+
+    # -----------------------------
+    # DISK DEVICES (skip loop/dm)
+    # -----------------------------
+    - name: Add disk devices (size in GB)
+      set_fact:
+        linux_inventory: "{{ linux_inventory | combine({
+          'disk_' ~ item.key: ((item.value.size | int) / 1024 / 1024 / 1024) | round(2)
+        }) }}"
+      loop: "{{ ansible_devices | dict2items }}"
+      when: item.key is not match('^(loop|dm-)')
+
+    # -----------------------------
+    # PARTITIONS (device partitions)
+    # -----------------------------
+    - name: Add partitions
+      set_fact:
+        linux_inventory: "{{ linux_inventory | combine({
+          'partition_' ~ part.key: (part.value.size | int)
+        }) }}"
+      loop: "{{ ansible_devices | dict2items | map(attribute='value.partitions') | list | map('dict2items') | sum(start=[]) }}"
+      vars:
+        part: "{{ item }}"
+
+    # -----------------------------
+    # MOUNT PATHS (actual filesystem)
+    # -----------------------------
+    - name: Add partition mount paths with sizes (GB)
+      set_fact:
+        linux_inventory: "{{ linux_inventory | combine({
+          'mount_' ~ (mount.mount | regex_replace('^/', '') | regex_replace('/', '_') | default('root')):
+          ((mount.size_total | int) / 1024 / 1024 / 1024) | round(2)
+        }) }}"
+      loop: "{{ ansible_mounts }}"
+      vars:
+        mount: "{{ item }}"
+
+    # -----------------------------
+    # DOCKER INFORMATION (CLI fallback)
+    # -----------------------------
+    - name: Get Docker images
+      command: docker images --format "{{'{{.Repository}}:{{.Tag}}'}}"
+      register: docker_images_cmd
+      failed_when: false
+
+    - name: Add Docker images
+      set_fact:
+        linux_inventory: "{{ linux_inventory | combine({
+          'docker_images': docker_images_cmd.stdout_lines
+        }) }}"
+
+    - name: Get Docker containers
+      command: docker ps -a --format "{{'{{.Names}} ({{.Status}})'}}"
+      register: docker_containers_cmd
+      failed_when: false
+
+    - name: Add Docker containers
+      set_fact:
+        linux_inventory: "{{ linux_inventory | combine({
+          'docker_containers': docker_containers_cmd.stdout_lines
+        }) }}"
+
+    # -----------------------------
+    # SAVE OUTPUT
+    # -----------------------------
+    - name: Save inventory to file
+      delegate_to: localhost
+      copy:
+        content: "{{ linux_inventory | to_nice_json }}"
+        dest: "{{ inventory_output_dir }}/{{ inventory_hostname }}.json"

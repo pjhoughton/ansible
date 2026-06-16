@@ -2,6 +2,5 @@
 # Handlers for software_management role
 
 - name: Reboot the system if required
-  ansible.builtin.reboot:
-    reboot_timeout: 300
-
+  ansible.builtin.command: shutdown -r +10 "System will reboot in 10 minutes due to updates"
+  become: yes

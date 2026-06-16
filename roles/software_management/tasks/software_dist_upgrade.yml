@@ -1,14 +1,22 @@
 ---
 # Main tasks for software_management role
 
-# Perform dist-upgrade on Debian-based distros
+# ---------------------------------------------------------
+# Debian / Ubuntu upgrade
+# ---------------------------------------------------------
 - name: Perform dist-upgrade on Debian-based distros
   ansible.builtin.apt:
-    upgrade: dist
     update_cache: yes
-  when: ansible_facts['os_family'] == "Debian"
+    cache_valid_time: 3600
+    upgrade: dist
+    autoremove: yes
+    autoclean: yes
+  when: ansible_facts['distribution'] in ['Ubuntu', 'Debian']
 
-# Perform upgrade on Red Hat-based distros
+
+# ---------------------------------------------------------
+# RedHat upgrade
+# ---------------------------------------------------------
 - name: Perform upgrade on Red Hat-based distros with yum
   ansible.builtin.yum:
     name: '*'
@@ -21,32 +29,55 @@
     state: latest
   when: ansible_facts['os_family'] == "RedHat" and ansible_distribution_major_version | int >= 8
 
-# Check if reboot is required
-- name: Check if reboot is required
+
+# ---------------------------------------------------------
+# Debian reboot detection
+# ---------------------------------------------------------
+- name: Check if reboot required (Debian/Ubuntu)
   ansible.builtin.stat:
     path: /var/run/reboot-required
-  register: reboot_required_file
-  when: ansible_facts['os_family'] == "Debian"
+  register: debian_reboot_file
+  when: ansible_facts['distribution'] in ['Ubuntu', 'Debian']
 
-- name: Check if reboot is required with yum/dnf
-  ansible.builtin.command:
-    cmd: needs-restarting
+
+# ---------------------------------------------------------
+# RedHat reboot detection
+# ---------------------------------------------------------
+- name: Check if needs-restarting exists
+  ansible.builtin.stat:
+    path: /usr/bin/needs-restarting
+  register: needs_restarting_bin
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Check if reboot is required with needs-restarting
+  ansible.builtin.command: needs-restarting -r
   register: yum_dnf_reboot_check
   failed_when: yum_dnf_reboot_check.rc not in [0, 1]
-  when: ansible_facts['os_family'] == "RedHat"
+  changed_when: false
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+    - needs_restarting_bin.stat.exists
 
-# Set reboot required fact
-- name: Set reboot required fact on Debian-based distros
+
+# ---------------------------------------------------------
+# Unified reboot_required fact
+# ---------------------------------------------------------
+- name: Set reboot_required fact (Debian)
   ansible.builtin.set_fact:
-    reboot_required: "{{ reboot_required_file.stat.exists }}"
-  when: ansible_facts['os_family'] == "Debian"
+    reboot_required: "{{ debian_reboot_file.stat.exists }}"
+  when: ansible_facts['distribution'] in ['Ubuntu', 'Debian']
 
-- name: Set reboot required fact on Red Hat-based distros
+- name: Set reboot_required fact (RedHat)
   ansible.builtin.set_fact:
     reboot_required: "{{ yum_dnf_reboot_check.rc == 1 }}"
-  when: ansible_facts['os_family'] == "RedHat"
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+    - needs_restarting_bin.stat.exists
 
-# Notify handler to reboot if necessary
+
+# ---------------------------------------------------------
+# Notify handler if reboot needed
+# ---------------------------------------------------------
 - name: Notify reboot handler if necessary
   ansible.builtin.debug:
     msg: "Reboot required, notifying the handler."

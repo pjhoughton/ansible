@@ -8,6 +8,7 @@
   become: yes
   strategy: free
   vars:
+    software_cache: true
     software_dist_upgrade: true
     disk_cleanup: true
   roles:
