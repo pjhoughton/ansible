@@ -14,7 +14,8 @@ iotapp1.houghton.network
 app1.houghton.network 
 
 [xcp_servers]
-xo.houghton.network ignore_unreachable=true ansible_ssh_common_args='-o ConnectTimeout=2'
+xo.houghton.network unreachable_ok=true ansible_ssh_common_args='-o ConnectTimeout=2'
+
 
 
 
