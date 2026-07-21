@@ -1,0 +1,443 @@
+---
+# -----------------------------------------------------------------------------
+# PLAYBOOK PURPOSE
+# -----------------------------------------------------------------------------
+# This playbook safely frees disk space on Ubuntu/Debian servers that use LVM.
+# It is designed for production environments where disk pressure can cause
+# outages, but cleanup must avoid touching application or user data.
+#
+# -----------------------------------------------------------------------------
+# WHAT THE PLAYBOOK DOES
+# -----------------------------------------------------------------------------
+# - Detects mounted LVM logical volumes under /dev/mapper/*
+# - Checks disk usage against a configurable threshold
+# - Runs cleanup only when at least one LVM filesystem exceeds the threshold
+# - Detects whether Docker is installed before running Docker cleanup
+# - Logs actions to /var/log/disk_cleanup.log
+# - Prints a final summary
+#
+# -----------------------------------------------------------------------------
+# SAFE CLEANUP ACTIONS
+# -----------------------------------------------------------------------------
+# - Apt autoclean/autoremove
+# - Systemd journal vacuum to configured size
+# - /tmp cleanup for files older than configured age
+# - Optional Docker prune for unused containers/images/networks/build cache
+#
+# IMPORTANT:
+# - Docker volume pruning is disabled by default because unused Docker volumes
+#   can still contain data that may be needed later.
+#
+# -----------------------------------------------------------------------------
+# REQUIREMENTS
+# -----------------------------------------------------------------------------
+# - Debian-based system
+# - LVM-managed partitions
+# - community.docker collection if Docker prune is enabled
+# -----------------------------------------------------------------------------
+
+- name: Check LVM partitions and clean if above threshold
+  hosts: all
+  become: yes
+  gather_facts: true
+
+  vars:
+    # Cleanup only runs when one or more LVM filesystems exceed this percentage
+    disk_threshold: 80
+
+    # Log file used for audit/troubleshooting
+    log_file: /var/log/disk_cleanup.log
+
+    # Systemd journal retention target
+    journal_vacuum_size: "500M"
+
+    # Remove files in /tmp older than this many days
+    tmp_file_age_days: 3
+
+    # Docker cleanup options
+    docker_prune_enabled: true
+
+    # Safer default: do not prune Docker volumes unless explicitly enabled
+    docker_prune_volumes: false   # be careful setting to true 
+
+    # Internal list used for final summary
+    cleaned_partitions: []
+
+  tasks:
+    # Confirm this playbook is only running on Debian-based systems.
+    # This protects against accidentally running apt tasks on unsupported distros.
+    - name: Validate supported operating system
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['os_family'] == "Debian"
+        fail_msg: "This cleanup playbook is intended for Debian-based systems only."
+        success_msg: "Supported Debian-based system detected."
+      tags:
+        - disk_cleanup
+        - validate
+
+    # Ensure the cleanup log file exists before writing log entries.
+    - name: Ensure log file exists
+      ansible.builtin.file:
+        path: "{{ log_file }}"
+        state: touch
+        mode: "0644"
+      tags:
+        - disk_cleanup
+        - log
+
+    # Log the start time of the cleanup run.
+    - name: Log start time
+      ansible.builtin.lineinfile:
+        path: "{{ log_file }}"
+        line: "=== Cleanup run started at {{ ansible_date_time.iso8601 }} ==="
+        insertafter: EOF
+      tags:
+        - disk_cleanup
+        - log
+
+    # Get filesystem usage in POSIX output format.
+    # This provides predictable columns for parsing.
+    - name: Get filesystem usage
+      ansible.builtin.command:
+        cmd: df -P
+      register: df_output
+      changed_when: false
+      tags:
+        - disk_cleanup
+        - check
+
+    # Show raw df output when running with -v.
+    # Useful if filesystem parsing does not behave as expected.
+    - name: Debug raw filesystem usage
+      ansible.builtin.debug:
+        var: df_output.stdout_lines
+        verbosity: 1
+      tags:
+        - disk_cleanup
+        - check
+        - debug
+
+    # Initialise the partitions list before parsing df output.
+    - name: Initialise parsed filesystem list
+      ansible.builtin.set_fact:
+        partitions: []
+      tags:
+        - disk_cleanup
+        - check
+
+    # Parse each df output line into a structured dictionary.
+    # Expected df -P columns:
+    # filesystem size used available use_percent mount
+    - name: Parse df output into structured data
+      ansible.builtin.set_fact:
+        partitions: "{{ partitions + [partition_item] }}"
+      vars:
+        df_fields: "{{ item.split() }}"
+        partition_item:
+          filesystem: "{{ df_fields[0] }}"
+          size: "{{ df_fields[1] }}"
+          used: "{{ df_fields[2] }}"
+          avail: "{{ df_fields[3] }}"
+          use_percent: "{{ df_fields[4] }}"
+          mount: "{{ df_fields[5] }}"
+      loop: "{{ df_output.stdout_lines[1:] }}"
+      loop_control:
+        label: "{{ item }}"
+      when: item.split() | length >= 6
+      tags:
+        - disk_cleanup
+        - check
+
+    # Show parsed filesystem data when running with -v.
+    # Useful for confirming df output has been converted correctly.
+    - name: Debug parsed filesystem data
+      ansible.builtin.debug:
+        var: partitions
+        verbosity: 1
+      tags:
+        - disk_cleanup
+        - check
+        - debug
+
+    # Keep only LVM-backed filesystems under /dev/mapper.
+    - name: Filter LVM partitions
+      ansible.builtin.set_fact:
+        lvm_partitions: "{{ partitions | selectattr('filesystem', 'match', '^/dev/mapper/') | list }}"
+      tags:
+        - disk_cleanup
+        - check
+
+    # Show detected LVM partitions when running with -v.
+    # Useful for confirming the playbook is targeting the expected filesystems.
+    - name: Debug detected LVM partitions
+      ansible.builtin.debug:
+        msg:
+          - "Detected LVM partitions:"
+          - "{{ lvm_partitions }}"
+        verbosity: 1
+      tags:
+        - disk_cleanup
+        - check
+        - debug
+
+    # Log all detected LVM partitions.
+    - name: Log detected LVM partitions
+      ansible.builtin.lineinfile:
+        path: "{{ log_file }}"
+        line: "Detected LVM partitions: {{ lvm_partitions | map(attribute='filesystem') | list }}"
+        insertafter: EOF
+      tags:
+        - disk_cleanup
+        - log
+
+    # Initialise partitions requiring cleanup list.
+    - name: Initialise partitions requiring cleanup list
+      ansible.builtin.set_fact:
+        partitions_requiring_cleanup: []
+      tags:
+        - disk_cleanup
+        - check
+
+    # Add any LVM partition over the threshold to the cleanup list.
+    - name: Identify LVM partitions above threshold
+      ansible.builtin.set_fact:
+        partitions_requiring_cleanup: "{{ partitions_requiring_cleanup + [item] }}"
+      loop: "{{ lvm_partitions }}"
+      loop_control:
+        label: "{{ item.filesystem }} mounted on {{ item.mount }}"
+      when: item.use_percent | regex_replace('%', '') | int > disk_threshold
+      tags:
+        - disk_cleanup
+        - check
+
+    # Show partitions that will trigger cleanup when running with -v.
+    - name: Debug partitions requiring cleanup
+      ansible.builtin.debug:
+        msg:
+          - "Disk threshold: {{ disk_threshold }}%"
+          - "Partitions requiring cleanup: {{ partitions_requiring_cleanup }}"
+        verbosity: 1
+      tags:
+        - disk_cleanup
+        - check
+        - debug
+
+    # Check whether the Docker CLI exists.
+    # The task does not fail when Docker is not installed.
+    - name: Check if Docker is installed
+      ansible.builtin.command:
+        cmd: which docker
+      register: docker_check
+      failed_when: false
+      changed_when: false
+      tags:
+        - disk_cleanup
+        - docker
+        - check
+
+    # Store Docker detection as a simple boolean fact.
+    - name: Set docker_installed fact
+      ansible.builtin.set_fact:
+        docker_installed: "{{ docker_check.rc == 0 }}"
+      tags:
+        - disk_cleanup
+        - docker
+        - check
+
+    # Show Docker detection result when running with -v.
+    - name: Debug Docker detection
+      ansible.builtin.debug:
+        msg:
+          - "Docker installed: {{ docker_installed }}"
+          - "Docker prune enabled: {{ docker_prune_enabled }}"
+          - "Docker volume prune enabled: {{ docker_prune_volumes }}"
+        verbosity: 1
+      tags:
+        - disk_cleanup
+        - docker
+        - debug
+
+    # Log Docker detection.
+    - name: Log Docker detection
+      ansible.builtin.lineinfile:
+        path: "{{ log_file }}"
+        line: "Docker installed: {{ docker_installed }}"
+        insertafter: EOF
+      tags:
+        - disk_cleanup
+        - log
+
+    # Run cleanup actions only if one or more LVM partitions are above threshold.
+    # The cleanup actions are system-wide, so they are only executed once.
+    - name: Run safe cleanup actions when LVM usage exceeds threshold
+      block:
+        # Log which partitions triggered cleanup.
+        - name: Log cleanup trigger
+          ansible.builtin.lineinfile:
+            path: "{{ log_file }}"
+            line: "Cleanup triggered by partitions: {{ partitions_requiring_cleanup | map(attribute='filesystem') | list }}"
+            insertafter: EOF
+
+        # Store cleaned partitions for the final summary.
+        - name: Set cleaned partitions summary
+          ansible.builtin.set_fact:
+            cleaned_partitions: "{{ partitions_requiring_cleanup | map(attribute='filesystem') | list }}"
+
+        # Clean apt cache and remove unused packages.
+        - name: Clean apt cache and remove unused packages
+          ansible.builtin.apt:
+            autoclean: yes
+            autoremove: yes
+          register: apt_cleanup_result
+
+        # Show apt cleanup result when running with -v.
+        - name: Debug apt cleanup result
+          ansible.builtin.debug:
+            msg:
+              - "Apt cleanup changed: {{ apt_cleanup_result.changed }}"
+            verbosity: 1
+
+        # Log apt cleanup.
+        - name: Log apt cleanup
+          ansible.builtin.lineinfile:
+            path: "{{ log_file }}"
+            line: "Apt autoclean/autoremove completed."
+            insertafter: EOF
+
+        # Vacuum systemd journal logs to the configured size.
+        - name: Vacuum systemd logs
+          ansible.builtin.command:
+            cmd: "journalctl --vacuum-size={{ journal_vacuum_size }}"
+          register: journal_cleanup_result
+          changed_when: true
+
+        # Show journal cleanup output when running with -v.
+        - name: Debug journal cleanup output
+          ansible.builtin.debug:
+            var: journal_cleanup_result.stdout_lines
+            verbosity: 1
+
+        # Log journal cleanup.
+        - name: Log journal cleanup
+          ansible.builtin.lineinfile:
+            path: "{{ log_file }}"
+            line: "Systemd journal vacuumed to {{ journal_vacuum_size }}."
+            insertafter: EOF
+
+        # Remove regular files from /tmp older than the configured number of days.
+        # Directories are not deleted.
+        # -xdev prevents crossing onto other filesystems.
+        - name: Clean old files from /tmp
+          ansible.builtin.command:
+            cmd: "find /tmp -xdev -type f -mtime +{{ tmp_file_age_days }} -delete"
+          register: tmp_cleanup_result
+          changed_when: true
+
+        # Show /tmp cleanup result when running with -v.
+        - name: Debug tmp cleanup result
+          ansible.builtin.debug:
+            msg:
+              - "/tmp cleanup command completed"
+              - "Files older than {{ tmp_file_age_days }} days were targeted"
+            verbosity: 1
+
+        # Log /tmp cleanup.
+        - name: Log tmp cleanup
+          ansible.builtin.lineinfile:
+            path: "{{ log_file }}"
+            line: "/tmp cleaned: files older than {{ tmp_file_age_days }} days removed."
+            insertafter: EOF
+
+        # Prune unused Docker resources when Docker is installed and pruning is enabled.
+        # Docker volumes are disabled by default to avoid removing retained data.
+        - name: Docker prune unused resources
+          community.docker.docker_prune:
+            containers: true
+            images: true
+            networks: true
+            volumes: "{{ docker_prune_volumes }}"
+            builder_cache: true
+          register: docker_prune_result
+          when:
+            - docker_installed
+            - docker_prune_enabled
+
+        # Show Docker prune result when running with -v.
+        - name: Debug Docker prune result
+          ansible.builtin.debug:
+            var: docker_prune_result
+            verbosity: 1
+          when:
+            - docker_installed
+            - docker_prune_enabled
+
+        # Log Docker prune.
+        - name: Log Docker prune
+          ansible.builtin.lineinfile:
+            path: "{{ log_file }}"
+            line: "Docker prune executed. Volume prune enabled: {{ docker_prune_volumes }}."
+            insertafter: EOF
+          when:
+            - docker_installed
+            - docker_prune_enabled
+
+      when: partitions_requiring_cleanup | length > 0
+      tags:
+        - disk_cleanup
+        - clean
+
+    # Log when no cleanup was required.
+    - name: Log no cleanup required
+      ansible.builtin.lineinfile:
+        path: "{{ log_file }}"
+        line: "No cleanup required. All detected LVM partitions are at or below {{ disk_threshold }}%."
+        insertafter: EOF
+      when: partitions_requiring_cleanup | length == 0
+      tags:
+        - disk_cleanup
+        - log
+
+    # Re-check filesystem usage after cleanup.
+    - name: Get filesystem usage after cleanup
+      ansible.builtin.command:
+        cmd: df -P
+      register: df_after_output
+      changed_when: false
+      tags:
+        - disk_cleanup
+        - verify
+
+    # Show filesystem usage after cleanup when running with -v.
+    - name: Debug filesystem usage after cleanup
+      ansible.builtin.debug:
+        var: df_after_output.stdout_lines
+        verbosity: 1
+      tags:
+        - disk_cleanup
+        - verify
+        - debug
+
+    # Log completion timestamp.
+    - name: Log completion
+      ansible.builtin.lineinfile:
+        path: "{{ log_file }}"
+        line: "=== Cleanup run finished at {{ ansible_date_time.iso8601 }} ==="
+        insertafter: EOF
+      tags:
+        - disk_cleanup
+        - log
+
+    # Print a concise final summary.
+    - name: Print summary
+      ansible.builtin.debug:
+        msg:
+          - "Cleanup completed."
+          - "Disk threshold: {{ disk_threshold }}%"
+          - "Partitions cleaned: {{ cleaned_partitions | default([]) }}"
+          - "Docker installed: {{ docker_installed }}"
+          - "Docker prune enabled: {{ docker_prune_enabled }}"
+          - "Docker volume prune enabled: {{ docker_prune_volumes }}"
+      tags:
+        - disk_cleanup
+        - summary
