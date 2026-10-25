@@ -28,7 +28,6 @@
   vars:
     ufw: true
     set_timezone: true
-    swap_file: true
     disable_ipv6: true
     
   roles:

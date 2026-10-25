@@ -1,6 +1,14 @@
 
 # Handlers for software_management role
+- name: Reboot Linux system
+  become: true
+  ansible.builtin.reboot:
+    reboot_timeout: 1800
+    connect_timeout: 30
+    post_reboot_delay: 30
+    msg: "System reboot initiated by Ansible after software updates."
+  listen: reboot_required
+  when:
+    - ansible_facts.get('os_family', '') != 'Windows'
 
-- name: Reboot the system if required
-  ansible.builtin.command: shutdown -r +10 "System will reboot in 10 minutes due to updates"
-  become: yes
+ 
